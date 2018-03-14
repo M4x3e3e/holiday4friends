@@ -1,0 +1,86 @@
+{
+  "project_info": {
+    "project_number": "530757275934",
+    "firebase_url": "https://standfestprohlapp.firebaseio.com",
+    "project_id": "standfestprohlapp",
+    "storage_bucket": "standfestprohlapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530757275934:android:fd75255e84f01751",
+        "android_client_info": {
+          "package_name": "com.example.max.helloworld"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "530757275934-lvn7eq0plbgi4ba02a8i6amjnhmfnb0n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0G21qFIQfNgseJ1tsp6Ym61aoi3eKiuE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530757275934:android:7923a1903a43093d",
+        "android_client_info": {
+          "package_name": "maxundmax.holiday4friends"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "530757275934-jk80ia5h667iha5domp5maemo9e1p3r0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "maxundmax.holiday4friends",
+            "certificate_hash": "6bf84e03701a47dab61dd393d7b79e976cc0178e"
+          }
+        },
+        {
+          "client_id": "530757275934-lvn7eq0plbgi4ba02a8i6amjnhmfnb0n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0G21qFIQfNgseJ1tsp6Ym61aoi3eKiuE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "530757275934-lvn7eq0plbgi4ba02a8i6amjnhmfnb0n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
