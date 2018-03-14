@@ -49,21 +49,6 @@ public class MainActivity extends AppCompatActivity
                         .setAvailableProviders(providers)
                         .build(),
                 RC_SIGN_IN);
-                AuthUI.getInstance()
-                        .signOut(this)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        public void onComplete(@NonNull Task<Void> task) {
-                    }
-
-                });
-                AuthUI.getInstance()
-                        .delete(this)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                        // ...
-                    }
-                });
 
 
 
