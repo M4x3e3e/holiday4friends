@@ -158,10 +158,12 @@
     <orderEntry type="library" name="com.google.firebase:firebase-auth-11.8.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-base-11.8.0" level="project" />
     <orderEntry type="library" name="com.facebook.android:facebook-applinks-4.27.0" level="project" />
+    <orderEntry type="library" name="com.squareup.okhttp:okhttp:2.7.2@jar" level="project" />
     <orderEntry type="library" name="com.android.support.constraint:constraint-layout-solver:1.1.0-beta5@jar" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-analytics-impl-11.8.0" level="project" />
     <orderEntry type="library" name="com.android.support:support-v4-27.0.2" level="project" />
     <orderEntry type="library" name="com.android.support:appcompat-v7-27.0.2" level="project" />
+    <orderEntry type="library" name="com.google.firebase:firebase-firestore-11.8.0" level="project" />
     <orderEntry type="library" name="com.android.support:support-annotations:27.0.2@jar" level="project" />
     <orderEntry type="library" name="com.android.support:design-27.0.2" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-iid-license-11.8.0" level="project" />
