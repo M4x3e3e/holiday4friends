@@ -1,0 +1,58 @@
+@startuml
+' uncomment the line below if you're using computer with a retina display
+' skinparam dpi 300
+!define Table(name,desc) class name as "desc" << (T,#FFAAAA) >>
+' we use bold for primary key
+' green color for unique
+' and underscore for not_null
+!define primary_key(x) <b>x</b>
+!define unique(x) <color:green>x</color>
+!define not_null(x) <u>x</u>
+' other tags available:
+' <i></i>
+' <back:COLOR></color>, where color is a color name or html color code
+' (#FFAACC)
+' see: http://plantuml.com/classes.html#More
+hide methods
+hide stereotypes
+
+
+
+Table(user, "user\n(User in our system)") {
+primary_key(unique(id)) INTEGER
+not_null(email) VARCHAR[64]
+username VARCHAR[32]
+password VARCHAR[64]
+}
+
+Table(activity, "activity\n(The user activities)") {
+primary_key(id) INTEGER
+not_null(owner_id) INTEGER
+not_null(name) VARCHAR[MAX]
+start DATE
+end DATE
+public BOOLEAN
+timestamp DATETIME
+}
+
+Table(media, "media\n(Different medias for the activities)") {
+primary_key(id) INTEGER
+name VARCHAR[32]
+value VARCHAR[MAX]
+type VARCHAR[32]
+timestamp DATETIME
+}
+
+Table(subscription, "subscription\n(User activity subscriptions)") {
+    primary_key(id) INT
+    not_null(user_id) INT
+    not_null(activity_id) INT
+timestamp DATETIME
+}
+
+activity "1" --> "*" subscription : "An activity  can\n  have many subscription"
+user "1" --> "*" subscription : "A user can\n subscripe for many activities"
+activity "1" --> "*" media : "An activity may\n  have many media"
+user "1" --> "*" activity : "A user may 'own'\n many activities"
+
+@enduml
