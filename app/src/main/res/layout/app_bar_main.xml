@@ -25,33 +25,8 @@
             layout="@layout/content_main"
             tools:layout_editor_absoluteY="56dp" />
 
-    <Button
-                android:id="@+id/button_write"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|bottom"
-                android:layout_weight="1"
-                android:text="Neuer Urlaub"
-                tools:layout_editor_absoluteX="130dp"
-                tools:layout_editor_absoluteY="519dp" />
 
-            <EditText
-                android:id="@+id/holiday_story"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:text="Story"
-                tools:layout_editor_absoluteY="137dp" />
 
-            <EditText
-                android:id="@+id/holiday_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|top"
-                android:layout_weight="1"
-                android:layout_marginTop="150px"
-                android:text="Urlaubsname"/>
 
 
 </android.support.design.widget.CoordinatorLayout>

@@ -1,84 +1,75 @@
 package maxundmax.holiday4friends;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
+import android.view.View;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentListenOptions;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldPath;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.ServerTimestamp;
-import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.firestore.Transaction;
-import com.google.firebase.firestore.WriteBatch;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private static final int RC_SIGN_IN = 123;
     private FirebaseFirestore mFirestore;
+
     private static final String TAG = "MainActivity";
-    private static final String DEFAULT_COLLECTION = "Urlaube";
+    private static final String ACTIVITY_COLLECTION = "activity";
+    private static final String MEDIA_COLLECTION = "activity";
 
-<<<<<<< HEAD
+    private void setNavigationViewListener() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
+    }
 
-=======
->>>>>>> 96680075d7bbd3d27c316857c643d93a9281eaaa
-
+    private void getData() {
+        mFirestore.collection("activities")
+                .whereEqualTo("owner_id", FirebaseAuth.getInstance().getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setNavigationViewListener();
+        mFirestore = FirebaseFirestore.getInstance();
+
+        getData();
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
@@ -107,38 +98,17 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        findViewById(R.id.button_write).setOnClickListener(this);
-        mFirestore = FirebaseFirestore.getInstance();
-<<<<<<< HEAD
+        //findViewById(R.id.button_write).setOnClickListener(this);
+
 
         NavigationView logout = findViewById(R.id.logout);
 
-=======
->>>>>>> 96680075d7bbd3d27c316857c643d93a9281eaaa
-
     }
 
-    private void onWriteClicked() {
-        EditText holiday_name = (EditText)findViewById(R.id.holiday_name);
-        EditText holiday_story = (EditText)findViewById(R.id.holiday_story);
-        String holidayName = holiday_name.getText().toString();
-        String holidayStory = holiday_story.getText().toString();
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", holidayName);
-        map.put("story", holidayStory);
 
-        Task<Void> voidTask = mFirestore.collection(DEFAULT_COLLECTION)
-                .document()
-                .set(map)
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Log.d(TAG, "write:onComplete");
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "write:onComplete:failed", task.getException());
-                        }
-                    }
-                });
+    private void CreateActivity() {
+        Intent intent = new Intent(this, create_holiday.class);
+        startActivityForResult(intent, 1);
     }
 
     @Override
@@ -198,17 +168,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        if (id == R.id.nav_create_activity) {
+            CreateActivity();
 
         }
 
@@ -217,23 +178,22 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    public void logout(){
+    private void setNavigationViewListner() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
 
-=======
-=======
->>>>>>> 96680075d7bbd3d27c316857c643d93a9281eaaa
+
+    public void logout() {
+        FirebaseAuth.getInstance().signOut();
+    }
+
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.button_write) {
-            onWriteClicked();
+            CreateActivity();
         }
-<<<<<<< HEAD
->>>>>>> 96680075d7bbd3d27c316857c643d93a9281eaaa
-=======
->>>>>>> 96680075d7bbd3d27c316857c643d93a9281eaaa
-
     }
 }
+
 
