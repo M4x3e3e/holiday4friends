@@ -69,8 +69,11 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "MainActivity";
     private static final String DEFAULT_COLLECTION = "Urlaube";
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 96680075d7bbd3d27c316857c643d93a9281eaaa
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,9 +109,12 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         findViewById(R.id.button_write).setOnClickListener(this);
         mFirestore = FirebaseFirestore.getInstance();
+<<<<<<< HEAD
 
         NavigationView logout = findViewById(R.id.logout);
 
+=======
+>>>>>>> 96680075d7bbd3d27c316857c643d93a9281eaaa
 
     }
 
@@ -212,14 +218,20 @@ public class MainActivity extends AppCompatActivity
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     public void logout(){
 
 =======
+=======
+>>>>>>> 96680075d7bbd3d27c316857c643d93a9281eaaa
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.button_write) {
             onWriteClicked();
         }
+<<<<<<< HEAD
+>>>>>>> 96680075d7bbd3d27c316857c643d93a9281eaaa
+=======
 >>>>>>> 96680075d7bbd3d27c316857c643d93a9281eaaa
 
     }
