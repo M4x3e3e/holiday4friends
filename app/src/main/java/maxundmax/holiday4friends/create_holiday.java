@@ -40,38 +40,54 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import maxundmax.holiday4friends.Business.ActivityObject;
+
 
 public class create_holiday extends AppCompatActivity
         implements View.OnClickListener {
 
     private static final String ACTIVITY_COLLECTION = "activity";
     private static final String TAG = "CreateActivity";
-    private Uri filePath;
+
     private final int PICK_IMAGE_REQUEST = 7;
+    private Uri filePath;
+
     private FirebaseFirestore mFirestore;
     private FirebaseStorage storage;
     private StorageReference storageReference;
 
-        private EditText holiday_name;
-        private EditText activity_description;
-        private Button buttonSave;
-        private Button chooseImage;
-        private ImageView imageView;
+
+    private Button buttonSave;
+    private Button chooseImage;
+    private ImageView imageView;
+    EditText holiday_name;
+    EditText activity_description;
+
+
+    private ActivityObject actualActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_holiday);
+
+        // FireBase Objects
         mFirestore = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
-       holiday_name = (EditText) findViewById(R.id.activity_name);
-       activity_description = (EditText) findViewById(R.id.activity_description);
-       buttonSave = findViewById(R.id.button_write);
-       chooseImage = findViewById(R.id.btn_image_selector);
-       imageView = findViewById(R.id.image_viewer);
+        // Activity Object
+        this.actualActivity = new ActivityObject();
 
+        // UI Objects
+        holiday_name = (EditText) findViewById(R.id.activity_name);
+        activity_description = (EditText) findViewById(R.id.activity_description);
+
+        buttonSave = findViewById(R.id.button_write);
+        chooseImage = findViewById(R.id.btn_image_selector);
+        imageView = findViewById(R.id.image_viewer);
+
+        // Set Click Events to UI Objects
         buttonSave.setOnClickListener(this);
         chooseImage.setOnClickListener(this);
     }
@@ -79,44 +95,36 @@ public class create_holiday extends AppCompatActivity
     private void onWriteClicked() {
         //Check
 
-        String holidayName = holiday_name.getText().toString();
-        String holidayDescription = activity_description.getText().toString();
+        actualActivity.setName(holiday_name.getText().toString());
+        actualActivity.setDescription(activity_description.getText().toString());
 
-        if (TextUtils.isEmpty(holidayName)) {
+        if (TextUtils.isEmpty(actualActivity.getName())) {
             Toast.makeText(this, "Bitte geben Sie einen Namen an.", Toast.LENGTH_LONG).show();
             return;
         }
-        if (holidayName.length() > 50) {
+        if (actualActivity.getName().length() > 50) {
             Toast.makeText(this, "Der Name darf maximal 50 Zeichen lang sein. ", Toast.LENGTH_LONG).show();
             return;
         }
-        if (TextUtils.isEmpty(holidayDescription)) {
+        if (TextUtils.isEmpty(actualActivity.getDescription())) {
             Toast.makeText(this, "Bitte geben Sie eine kurze Beschreibung an.", Toast.LENGTH_LONG).show();
             return;
         }
 
-        if(filePath == null){
+        if (filePath == null) {
             Toast.makeText(this, "Bitte geben Sie ein Titelbild an.", Toast.LENGTH_LONG).show();
             return;
 
         }
-        String path = uploadImageToFirebase();
+        actualActivity.setImagePath(uploadImageToFirebase());
 
-        Boolean isPublic = true; // TODO: Am Anfang alle Stories Offen, später private möglich
+        actualActivity.setPublic(true);// TODO: Am Anfang alle Stories Offen, später private möglich
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("owner_id", FirebaseAuth.getInstance().getUid()); //Set the user as Story Owner
-        map.put("name", holidayName);
-        map.put("description", holidayDescription);
-        map.put("public", isPublic);
-        map.put("startdate", Calendar.getInstance().getTime());
-        map.put("enddate", null);
-        map.put("timestamp", Calendar.getInstance().getTime());
-        map.put("imagepath" ,path);
-
+        actualActivity.setStartdate(Calendar.getInstance().getTime());
+        actualActivity.setOwnerId(FirebaseAuth.getInstance().getCurrentUser().getUid());
         Task<Void> voidTask = mFirestore.collection(ACTIVITY_COLLECTION)
                 .document()
-                .set(map)
+                .set(actualActivity.getActivityMap())
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -127,37 +135,38 @@ public class create_holiday extends AppCompatActivity
                     }
                 });
 
+
+
     }
 
     private String uploadImageToFirebase() {
-        if(filePath != null)
-        {
+        if (filePath != null) {
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Hochladen...");
             progressDialog.show();
 
-            StorageReference ref = storageReference.child("images/"+ UUID.randomUUID().toString());
+            StorageReference ref = storageReference.child("images/" + UUID.randomUUID().toString());
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
-                            Toast.makeText(create_holiday.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(create_holiday.this, "Hochgeladen!", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(create_holiday.this, "Fehlgeschlagen "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(create_holiday.this, "Fehlgeschlagen " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Hochgeladen "+(int)progress+"%");
+                            progressDialog.setMessage("Hochgeladen " + (int) progress + "%");
                         }
                     });
             return ref.getPath();
@@ -187,16 +196,13 @@ public class create_holiday extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null )
-        {
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
             filePath = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 imageView.setImageBitmap(bitmap);
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

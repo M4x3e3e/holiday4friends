@@ -1,5 +1,6 @@
 package maxundmax.holiday4friends;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,20 +14,30 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
+import maxundmax.holiday4friends.Business.ActivityObject;
 
 
 public class MainActivity extends AppCompatActivity
@@ -39,6 +50,8 @@ public class MainActivity extends AppCompatActivity
     private static final String ACTIVITY_COLLECTION = "activity";
     private static final String MEDIA_COLLECTION = "activity";
 
+    private static ArrayList<ActivityObject> mArrayList = new ArrayList<>();
+
     private void setNavigationViewListener() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -46,22 +59,38 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getData() {
-        mFirestore.collection("activities")
-                .whereEqualTo("owner_id", FirebaseAuth.getInstance().getUid())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        mFirestore.collection(ACTIVITY_COLLECTION).whereEqualTo("owner_id", FirebaseAuth.getInstance().getCurrentUser().getUid()).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (DocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                            }
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                        if (documentSnapshots.isEmpty()) {
+                            Log.d(TAG, "onSuccess: LIST EMPTY");
+                            return;
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            // Convert the whole Query Snapshot to a list
+                            // of objects directly! No need to fetch each
+                            // document.
+                            for (DocumentChange documentChange : documentSnapshots.getDocumentChanges())
+                            {
+                                ActivityObject ac = new ActivityObject();
+                                SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                                ac.setOwnerId(documentChange.getDocument().getData().get("owner_id").toString());
+                                ac.setName(documentChange.getDocument().getData().get("name").toString());
+                                ac.setDescription(documentChange.getDocument().getData().get("description").toString());
+                                ac.setStartdate(sdf.parse(documentChange.getDocument().getData().get("startdate").toString()));
+
+                            }
                         }
-                    }
-                });
+                    }})
+                            .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(), "Error getting data!!!", Toast.LENGTH_LONG).show();
+                        }
+                    });
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +98,7 @@ public class MainActivity extends AppCompatActivity
         setNavigationViewListener();
         mFirestore = FirebaseFirestore.getInstance();
 
-        getData();
+
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
@@ -98,10 +127,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        //findViewById(R.id.button_write).setOnClickListener(this);
 
-
-        NavigationView logout = findViewById(R.id.logout);
 
     }
 
@@ -139,6 +165,7 @@ public class MainActivity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                getData();
                 // ...
             } else {
                 // Sign in failed, check response for error code
@@ -172,6 +199,10 @@ public class MainActivity extends AppCompatActivity
             CreateActivity();
 
         }
+        if(id == R.id.nav_logout){
+
+            logout();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -185,7 +216,14 @@ public class MainActivity extends AppCompatActivity
 
 
     public void logout() {
-        FirebaseAuth.getInstance().signOut();
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(MainActivity.this, "Erfolgreich ausgelogt.", Toast.LENGTH_LONG).show();
+                    }
+                });
+
     }
 
     @Override
@@ -193,6 +231,7 @@ public class MainActivity extends AppCompatActivity
         if (v.getId() == R.id.button_write) {
             CreateActivity();
         }
+
     }
 }
 
