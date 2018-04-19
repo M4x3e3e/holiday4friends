@@ -3,7 +3,6 @@ package maxundmax.holiday4friends;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -28,25 +27,18 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.google.zxing.common.StringUtils;
 
-import java.io.Console;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.spec.ECField;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
-import maxundmax.holiday4friends.Business.ActivityObject;
+import maxundmax.holiday4friends.Business.HolidayObject;
 
 
 public class create_holiday extends AppCompatActivity
         implements View.OnClickListener {
 
-    private static final String ACTIVITY_COLLECTION = "activity";
+    private static final String HOLIDAY_COLLECTION = "holiday";
     private static final String TAG = "CreateActivity";
 
     private final int PICK_IMAGE_REQUEST = 7;
@@ -64,7 +56,7 @@ public class create_holiday extends AppCompatActivity
     EditText activity_description;
 
 
-    private ActivityObject actualActivity;
+    private HolidayObject actualActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +69,7 @@ public class create_holiday extends AppCompatActivity
         storageReference = storage.getReference();
 
         // Activity Object
-        this.actualActivity = new ActivityObject();
+        this.actualActivity = new HolidayObject();
 
         // UI Objects
         holiday_name = (EditText) findViewById(R.id.activity_name);
@@ -116,14 +108,17 @@ public class create_holiday extends AppCompatActivity
             return;
 
         }
-        actualActivity.setImagePath(uploadImageToFirebase());
+        actualActivity.setImagepath(uploadImageToFirebase());
 
         actualActivity.setPublic(true);// TODO: Am Anfang alle Stories Offen, später private möglich
 
         actualActivity.setStartdate(Calendar.getInstance().getTime());
-        actualActivity.setOwnerId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        Task<Void> voidTask = mFirestore.collection(ACTIVITY_COLLECTION)
-                .document()
+        actualActivity.setOwner_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        String id = mFirestore.collection(HOLIDAY_COLLECTION).document().getId();
+        actualActivity.setId(id);
+
+        Task<Void> voidTask = mFirestore.collection(HOLIDAY_COLLECTION)
+                .document(id)
                 .set(actualActivity.getActivityMap())
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
@@ -132,11 +127,20 @@ public class create_holiday extends AppCompatActivity
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "write:onComplete:failed", task.getException());
                         }
+                        else
+                        {
+                            finishThis(RESULT_OK);
+                        }
                     }
                 });
 
 
 
+    }
+
+    private void finishThis(int resCode){
+        setResult(resCode);
+        finish();
     }
 
     private String uploadImageToFirebase() {
@@ -151,14 +155,12 @@ public class create_holiday extends AppCompatActivity
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
-                            Toast.makeText(create_holiday.this, "Hochgeladen!", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(create_holiday.this, "Fehlgeschlagen " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="maxundmax.holiday4friends.holiday_overview">
+
+    <EditText
+        android:id="@+id/modifyHolidayName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="13dp"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/modifyHolidayDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/modifyHolidayName"
+        android:layout_below="@+id/modifyHolidayName"
+        android:layout_marginTop="15dp"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <ImageView
+        android:id="@+id/modifyHolidayImageView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignStart="@+id/modifyHolidayDescription"
+        android:layout_below="@+id/modifyHolidayDescription"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_menu_camera" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/modifyHolidayImageView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="75dp"
+        android:layout_marginEnd="32dp"
+        android:text="Bild ändern" />
+
+</RelativeLayout>

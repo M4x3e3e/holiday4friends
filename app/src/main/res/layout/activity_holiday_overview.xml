@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="maxundmax.holiday4friends.holiday_overview">
+
+    <ImageView
+        android:id="@+id/holidayOverviewImageView"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+
+        android:layout_marginBottom="13dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="13dp"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher_round" />
+
+    <TextView
+        android:id="@+id/holidayOverviewTextViewName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/holidayOverviewImageView"
+        android:layout_marginStart="16dp"
+        android:layout_toEndOf="@+id/holidayOverviewImageView"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/holidayOverviewTextViewDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/holidayOverviewImageView"
+        android:layout_alignStart="@+id/holidayOverviewTextViewName"
+        android:layout_marginTop="2dp" />
+
+    <ListView
+        android:id="@+id/mediaListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+
+        android:layout_below="@+id/holidayOverviewImageView"></ListView>
+
+    <TextView
+        android:id="@+id/holidayOverviewEmptyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       android:layout_below="@id/holidayOverviewImageView"
+        android:layout_marginStart="20dp"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/btn_AddImageToHoliday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="14dp"
+        android:visibility="invisible"
+        android:text="Bild hinzufügen" />
+
+</RelativeLayout>

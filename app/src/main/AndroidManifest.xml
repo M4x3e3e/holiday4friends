@@ -15,11 +15,14 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".create_holiday"></activity>
+        <activity android:name=".create_holiday" android:label="Neuen Urlaub anlegen"/>
+        <activity android:name=".holiday_overview" android:label="Urlaubs Übersicht"/>
+        <activity android:name=".subscription_activity" android:label="Urlaube abonnieren"/>
+        <activity android:name=".myHolidays_activity" android:label="Meine Urlaube"/>
+
     </application>
 
 </manifest>
