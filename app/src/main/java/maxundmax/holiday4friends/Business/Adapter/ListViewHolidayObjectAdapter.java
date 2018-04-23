@@ -2,6 +2,7 @@ package maxundmax.holiday4friends.Business.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.MutableInt;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,10 +87,10 @@ public class ListViewHolidayObjectAdapter extends BaseAdapter
         }
 
 
-
-        textViewName.setText(acList.get(i).getName());
+        MutableInt count = acList.get(i).getSubscribeCount();
+        textViewName.setText(acList.get(i).getName() + "("+count.value+")");
         textViewDescription.setText(acList.get(i).getDescription());
-        FirebaseMethods.downloadImageIntoImageView(imageView,acList.get(i).getImagepath());
+        FirebaseMethods.downloadImageIntoImageView(imageView,acList.get(i));
         return view;
     }
 

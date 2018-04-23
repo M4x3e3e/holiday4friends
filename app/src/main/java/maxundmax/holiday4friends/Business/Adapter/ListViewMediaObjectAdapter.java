@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -48,13 +49,20 @@ public class ListViewMediaObjectAdapter extends BaseAdapter  {
         LayoutInflater inflater = LayoutInflater.from(context);
         view = inflater.inflate(R.layout.custom_media_listview_layout,null);
 
+
+
+
         ImageView imageView = (ImageView)view.findViewById(R.id.overviewMediaImageViewer);
         TextView textViewName = (TextView)view.findViewById(R.id.overviewMediaTextViewName);
         TextView textViewDescription = (TextView)view.findViewById(R.id.overviewMediaTextViewDescription);
-
+        textViewName.setVisibility(View.GONE);
         textViewName.setText(mdList.get(i).getName());
         textViewDescription.setText(mdList.get(i).getDescription());
-        FirebaseMethods.downloadImageIntoImageView(imageView,mdList.get(i).getImagepath());
+        if(mdList.get(i).getImage() == null) {
+            FirebaseMethods.downloadImageIntoImageView(imageView, mdList.get(i));
+        }else{
+            imageView.setImageBitmap(mdList.get(i).getImage());
+        }
         return view;
     }
 }

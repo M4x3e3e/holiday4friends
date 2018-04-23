@@ -65,7 +65,7 @@ public class holiday_overview extends AppCompatActivity
     private void Initialize() {
         nameTbx.setText(hObj.getName());
         descriptionTbx.setText(hObj.getDescription());
-        FirebaseMethods.downloadImageIntoImageView(imageView, hObj.getImagepath());
+        FirebaseMethods.downloadImageIntoImageView(imageView, hObj);
 
         if (hObj.getOwner_id().equals(FirebaseAuth.getInstance().getUid())) {
             btnAddImageToHoliday.setVisibility(View.VISIBLE);

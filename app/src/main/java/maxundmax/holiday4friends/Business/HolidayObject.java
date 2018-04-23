@@ -2,6 +2,7 @@ package maxundmax.holiday4friends.Business;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.MutableInt;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -99,6 +100,32 @@ public class HolidayObject {
         this.imagepath = imagePath;
     }
 
+    public MutableInt getSubscribeCount() {
+
+        FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+        mFirestore.collection("subscription").whereEqualTo("holiday_id", this.getId()).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                        if (documentSnapshots.isEmpty()) {
+
+                            return;
+                        } else {
+                            List<SubscriptionObject> acObjs = documentSnapshots.toObjects(SubscriptionObject.class);
+                            subCount.value = acObjs.size();
+                            return;
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+        return subCount;
+
+    }
 
 
     public ArrayList<MediaObject> getMediaList() {
@@ -121,6 +148,8 @@ public class HolidayObject {
 
     private SubscriptionObject subscriptionObject;
 
+    private MutableInt subCount;
+
     private String id;
     private String owner_id;
     private String name;
@@ -134,7 +163,6 @@ public class HolidayObject {
 
     public HolidayObject(String _id, String _ownerId, String _name, String _description, Date _startdate, Date _enddate, Boolean _isPublic, Date _timestamp, String _imagePath) {
         super();
-
         this.id = _id;
         this.owner_id = _ownerId;
         this.name = _name;
@@ -149,6 +177,8 @@ public class HolidayObject {
 
     public HolidayObject() {
         mediaList = new ArrayList<>();
+
+        this.subCount = new MutableInt(0);
     }
 
 

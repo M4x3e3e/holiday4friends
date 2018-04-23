@@ -76,14 +76,8 @@ public class MainActivity extends AppCompatActivity
         mFirestore = FirebaseFirestore.getInstance();
         mCtx = this;
 
-        Login();
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500);
-        animation.setDuration(3000); // in milliseconds
-        animation.setRepeatMode(ValueAnimator.RESTART);
-        animation.setRepeatCount(ValueAnimator.INFINITE);
-        animation.setInterpolator(new DecelerateInterpolator());
-        animation.start();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -93,19 +87,34 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+        Login();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+
+
+
+
+    }
+
+    private void Initialize(){
+
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500);
+        animation.setDuration(3000); // in milliseconds
+        animation.setRepeatMode(ValueAnimator.RESTART);
+        animation.setRepeatCount(ValueAnimator.INFINITE);
+        animation.setInterpolator(new DecelerateInterpolator());
+        animation.start();
+
+
+
+        getSubscriptions();
     }
 
     private void Login() {
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
-                new AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build(),
-                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
-                new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build(),
-                new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build());
+                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
+               );
 
         // Create and launch sign-in intent
         startActivityForResult(
@@ -130,12 +139,13 @@ public class MainActivity extends AppCompatActivity
                         subscriptionObjects.clear();
                         if (documentSnapshots.isEmpty()) {
                             Log.d(TAG, "onSuccess: LIST EMPTY");
+                            Initialize();
                         } else {
                             List<SubscriptionObject> subscriptionObjectList = documentSnapshots.toObjects(SubscriptionObject.class);
                             subscriptionObjects.addAll(subscriptionObjectList);
                             getHoliday(subscriptionObjectList);
                         }
-                        //Initialize();
+
                         return;
                     }
                 })
@@ -157,6 +167,7 @@ public class MainActivity extends AppCompatActivity
                         holidayObjects.clear();
                         if (documentSnapshots.isEmpty()) {
                             Log.d(TAG, "onSuccess: LIST EMPTY");
+                            Initialize();
                         } else {
                             List<HolidayObject> holidayObjectList = documentSnapshots.toObjects(HolidayObject.class);
 
@@ -167,8 +178,9 @@ public class MainActivity extends AppCompatActivity
                                     }
                                 }
                             }
+                            getMedia();
                         }
-                        getMedia();
+
                         return;
                     }
                 })
@@ -201,7 +213,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
             }
-            Initialize();
+            EndInitialize();
             return;
         }
     })
@@ -214,7 +226,7 @@ public class MainActivity extends AppCompatActivity
 
 }
 
-    private void Initialize() {
+    private void EndInitialize() {
         if(mediaObjects.size() <= 0)
         {
             ListView emptyView = findViewById(R.id.newsfeedListView);
@@ -296,11 +308,12 @@ public class MainActivity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                getSubscriptions();
+                Initialize();
+
                 // ...
             } else {
                 // Sign in failed, check response for error code
-                // ...
+                Login();
             }
         } else if (requestCode == CREATE_HOLIDAY) {
 
@@ -331,7 +344,7 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.

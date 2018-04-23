@@ -59,8 +59,11 @@ public class ListViewFeedObjectAdapter extends BaseAdapter  {
 
         textViewName.setText(getHolidayName(mediaObjects.get(i).getHoliday_id()));
         textViewDescription.setText(mediaObjects.get(i).getDescription());
-        FirebaseMethods.downloadImageIntoImageView(imageView,mediaObjects.get(i).getImagepath());
-        return view;
+        if(mediaObjects.get(i).getImage() == null) {
+            FirebaseMethods.downloadImageIntoImageView(imageView, mediaObjects.get(i));
+        }else{
+            imageView.setImageBitmap(mediaObjects.get(i).getImage());
+        } return view;
     }
 
     private String getHolidayName(String holidayId){

@@ -45,7 +45,7 @@ public class modify_holiday extends AppCompatActivity {
 
         nameTbx.setText(hObj.getName());
         descriptionTbx.setText(hObj.getDescription());
-        FirebaseMethods.downloadImageIntoImageView(imageView,hObj.getImagepath());
+        FirebaseMethods.downloadImageIntoImageView(imageView,hObj);
     }
 
 
