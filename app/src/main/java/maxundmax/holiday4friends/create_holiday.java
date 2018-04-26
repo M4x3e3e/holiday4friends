@@ -1,6 +1,7 @@
 package maxundmax.holiday4friends;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -32,6 +33,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.UUID;
 
+import maxundmax.holiday4friends.Business.FirebaseMethods;
 import maxundmax.holiday4friends.Business.HolidayObject;
 
 
@@ -108,7 +110,7 @@ public class create_holiday extends AppCompatActivity
             return;
 
         }
-        actualActivity.setImagepath(uploadImageToFirebase());
+        actualActivity.setImagepath(FirebaseMethods.uploadImageToFirebase(filePath,this));
 
         actualActivity.setPublic(true);// TODO: Am Anfang alle Stories Offen, später private möglich
 
@@ -119,7 +121,7 @@ public class create_holiday extends AppCompatActivity
 
         Task<Void> voidTask = mFirestore.collection(HOLIDAY_COLLECTION)
                 .document(id)
-                .set(actualActivity.getActivityMap())
+                .set(actualActivity.getDataMap())
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -143,38 +145,6 @@ public class create_holiday extends AppCompatActivity
         finish();
     }
 
-    private String uploadImageToFirebase() {
-        if (filePath != null) {
-            final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Hochladen...");
-            progressDialog.show();
-
-            StorageReference ref = storageReference.child("images/" + UUID.randomUUID().toString());
-            ref.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setMessage("Hochgeladen " + (int) progress + "%");
-                        }
-                    });
-            return ref.getPath();
-        }
-        return "";
-    }
 
     @Override
     public void onClick(View v) {

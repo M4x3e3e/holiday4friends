@@ -8,6 +8,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -22,6 +23,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,52 +34,67 @@ import java.util.UUID;
 public class FirebaseMethods {
     private static final String HOLIDAY_COLLECTION = "activity";
 
-    public static void downloadImageIntoImageView(ImageView v, final MediaObject obj) {
-        // Reference to an image file in Firebase Storage
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageReference = storage.getReference(obj.getImagepath());
 
-        final ImageView view = v;
-        final long five_MEGABYTE = 1024 * 1024 * 5;
+    public static void downloadImageIntoImageView(final ImageView v, final MediaObject obj) {
+        if (!LocalPhotoCache.ImageExists(obj.getImagepath()))// Reference to an image file in Firebase Storage
+        {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageReference = storage.getReference(obj.getImagepath());
+            final long five_MEGABYTE = 1024 * 1024 * 5;
 
-        storageReference.getBytes(five_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                obj.setImage(bitmap);
-                view.setImageBitmap(bitmap);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-            }
-        });
-
+            storageReference.getBytes(five_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    obj.setImage(bitmap);
+                    v.setImageBitmap(bitmap);
+                    LocalPhotoCache.AddImage(obj.getImagepath(), bitmap);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                }
+            });
+        } else {
+            Bitmap localMap = LocalPhotoCache.GetImage(obj.getImagepath());
+            obj.setImage(localMap);
+            v.setImageBitmap(localMap);
+        }
     }
 
-    public static void downloadImageIntoImageView(ImageView v, final HolidayObject obj) {
-        // Reference to an image file in Firebase Storage
+    public static void downloadImageIntoImageView(final ImageView v, final HolidayObject obj) {
+        if (!LocalPhotoCache.ImageExists(obj.getImagepath()))// Reference to an image file in Firebase Storage
+        {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageReference = storage.getReference(obj.getImagepath());
+
+            final long five_MEGABYTE = 1024 * 1024 * 5;
+
+            storageReference.getBytes(five_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    v.setImageBitmap(bitmap);
+                    LocalPhotoCache.AddImage(obj.getImagepath(), bitmap);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                }
+            });
+        } else {
+            Bitmap localMap = LocalPhotoCache.GetImage(obj.getImagepath());
+            v.setImageBitmap(localMap);
+        }
+    }
+
+    public static void deleteImageFromFirebase(String imagePath) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageReference = storage.getReference(obj.getImagepath());
+        StorageReference ref = storage.getReference().child(imagePath);
 
-        final ImageView view = v;
-        final long five_MEGABYTE = 1024 * 1024 * 5;
-
-        storageReference.getBytes(five_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-
-                view.setImageBitmap(bitmap);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-            }
-        });
-
+        ref.delete();
     }
 
     public static String uploadImageToFirebase(Uri filePath, Context context) {
@@ -90,19 +107,15 @@ public class FirebaseMethods {
 
                 int height = bitmap.getHeight();
                 int width = bitmap.getWidth();
-                float ratio = (float) height/width;
+                float ratio = (float) height / width;
 
                 int newWidth = 1920;
-                int newHeight = (int)((float)newWidth*ratio);
+                int newHeight = (int) ((float) newWidth * ratio);
 
 
                 Bitmap resizeBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
-
-
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 resizeBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
-
-
 
                 byte[] data = byteArrayOutputStream.toByteArray();
 
@@ -130,34 +143,10 @@ public class FirebaseMethods {
                             }
                         });
                 return ref.getPath();
-            }catch(IOException ex){}
+            } catch (IOException ex) {
+            }
         }
         return "";
     }
 
-   /* private void downloadFile() {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReferenceFromUrl("<your_bucket>");
-        StorageReference  islandRef = storageRef.child("file.txt");
-
-        File rootPath = new File(Environment.getExternalStorageDirectory(), "file_name");
-        if(!rootPath.exists()) {
-            rootPath.mkdirs();
-        }
-
-        final File localFile = new File(rootPath,"imageName.txt");
-
-        islandRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                Log.e("firebase ",";local tem file created  created " +localFile.toString());
-                //  updateDb(timestamp,localFile.toString(),position);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.e("firebase ",";local tem file not created  created " +exception.toString());
-            }
-        });
-    }*/
 }

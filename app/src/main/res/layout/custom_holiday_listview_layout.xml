@@ -56,17 +56,17 @@
     <ImageButton
         android:id="@+id/overviewHolidayBtnSubscription"
         style="@style/Widget.AppCompat.ImageButton"
-        android:visibility="gone"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_alignBottom="@+id/frameLayout"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/frameLayout"
-
         android:backgroundTint="@color/cardview_shadow_end_color"
+
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/ic_add_circle_black_24dp"
-        android:tint="@color/com_facebook_button_background_color_pressed"/>
+        android:tint="@color/com_facebook_button_background_color_pressed"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_add_circle_black_24dp" />
 
     <TextView
         android:id="@+id/overviewHolidayTextViewStatus"

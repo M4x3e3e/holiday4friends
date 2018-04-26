@@ -22,6 +22,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import maxundmax.holiday4friends.Business.Adapter.ListViewHolidayObjectAdapter;
@@ -29,6 +31,7 @@ import maxundmax.holiday4friends.Business.Adapter.ListViewMediaObjectAdapter;
 import maxundmax.holiday4friends.Business.FirebaseMethods;
 import maxundmax.holiday4friends.Business.HolidayObject;
 import maxundmax.holiday4friends.Business.MediaObject;
+import maxundmax.holiday4friends.Business.UploadebleObject;
 
 public class holiday_overview extends AppCompatActivity
         implements View.OnClickListener {
@@ -66,23 +69,18 @@ public class holiday_overview extends AppCompatActivity
         nameTbx.setText(hObj.getName());
         descriptionTbx.setText(hObj.getDescription());
         FirebaseMethods.downloadImageIntoImageView(imageView, hObj);
-
-        if (hObj.getOwner_id().equals(FirebaseAuth.getInstance().getUid())) {
+        boolean isOwnerView = hObj.getOwner_id().equals(FirebaseAuth.getInstance().getUid());
+        if (isOwnerView) {
             btnAddImageToHoliday.setVisibility(View.VISIBLE);
         }
 
         final ListView mediaListView = findViewById(R.id.mediaListView);
-        lvmoAdapater = new ListViewMediaObjectAdapter(hObj.getMediaList(), this);
+        lvmoAdapater = new ListViewMediaObjectAdapter(hObj.getMediaList(), this, isOwnerView);
         mediaListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 MediaObject selectedAC = (MediaObject) mediaListView.getItemAtPosition(i);
 
-                // Intent intent = new Intent(mCtx, holiday_overview.class);
-                // intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                // startActivityForResult(intent, HOLIDAY_OVERVIEW);
-                // intent.putExtra("id", selectedAC.getId());
-                // startActivity(intent);
             }
 
 
@@ -96,6 +94,8 @@ public class holiday_overview extends AppCompatActivity
 
 
     public void LoadHolidayFromDB(String id) {
+       // FirebaseMethods.GetDataFromFirebase(this.hObj);
+
         FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
         mFirestore.collection(HOLIDAY_COLLECTION).whereEqualTo("id", id).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

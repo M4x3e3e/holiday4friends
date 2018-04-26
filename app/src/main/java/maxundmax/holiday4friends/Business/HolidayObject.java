@@ -25,7 +25,7 @@ import java.util.Map;
  * Created by maximilianprohl on 14.04.18.
  */
 
-public class HolidayObject {
+public class HolidayObject extends UploadebleObject {
 
 
     public String getId() {
@@ -181,8 +181,8 @@ public class HolidayObject {
         this.subCount = new MutableInt(0);
     }
 
-
-    public Map getActivityMap() {
+    @Override
+    public Map getDataMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", this.id); //Set the user as Story Owner
         map.put("owner_id", this.owner_id); //Set the user as Story Owner
@@ -195,6 +195,4 @@ public class HolidayObject {
         map.put("imagepath", this.imagepath);
         return map;
     }
-
-
 }

@@ -86,9 +86,7 @@ public class ListViewHolidayObjectAdapter extends BaseAdapter
             imageViewSubscriped.setVisibility(View.VISIBLE);
         }
 
-
-        MutableInt count = acList.get(i).getSubscribeCount();
-        textViewName.setText(acList.get(i).getName() + "("+count.value+")");
+        textViewName.setText(acList.get(i).getName() + "("+acList.get(i).getSubscribeCount().value+")");
         textViewDescription.setText(acList.get(i).getDescription());
         FirebaseMethods.downloadImageIntoImageView(imageView,acList.get(i));
         return view;

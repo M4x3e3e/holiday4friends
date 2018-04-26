@@ -18,7 +18,7 @@ import java.util.Map;
  * Created by Max on 19.04.2018.
  */
 
-public class SubscriptionObject {
+public class SubscriptionObject extends UploadebleObject {
 
     private final String SUBSCRIPTION_COLLECTION = "subscription";
     private final String TAG = "SubscriptionObject";
@@ -63,16 +63,6 @@ public class SubscriptionObject {
     public SubscriptionObject() {
     }
 
-    public Map getActivityMap() {
-        Map<String, Object> map = new HashMap<>();
-
-        map.put("id", this.id);
-        map.put("user_id", this.user_id);
-        map.put("holiday_id", this.holiday_id);
-        map.put("timestamp", Calendar.getInstance().getTime());
-
-        return map;
-    }
 
     public void uploadSubScriptionToFirebase(Activity context) {
         FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
@@ -83,7 +73,7 @@ public class SubscriptionObject {
 
         Task<Void> voidTask = mFirestore.collection(SUBSCRIPTION_COLLECTION)
                 .document(id)
-                .set(getActivityMap())
+                .set(getDataMap())
                 .addOnCompleteListener(context, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -95,6 +85,18 @@ public class SubscriptionObject {
                         }
                     }
                 });
+    }
+
+    @Override
+    public Map getDataMap() {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("id", this.id);
+        map.put("user_id", this.user_id);
+        map.put("holiday_id", this.holiday_id);
+        map.put("timestamp", Calendar.getInstance().getTime());
+
+        return map;
     }
 }
 

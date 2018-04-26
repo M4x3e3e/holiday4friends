@@ -396,4 +396,15 @@ public class MainActivity extends AppCompatActivity
     }
 }
 
+/*
+TODO:
+
+        Foto Cache implementieren !
+        Splash Screen --> LOGO
+        Neuigkeiten --> Tage angezeigt werden !
+        Statistiken zu den Urlauben (Abbos)
+        Löschen aller Objekte
+        Subscription zurück nehmen
+        Strings in Resource File
+*/
 

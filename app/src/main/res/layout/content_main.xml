@@ -10,21 +10,22 @@
     tools:context="maxundmax.holiday4friends.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <TextView
+    <!--<TextView
         android:id="@+id/mainActivityHeaderText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Neuigkeiten"
         android:layout_margin="10dp"
+        android:text="Neuigkeiten"
+        android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
-
+-->
     <ListView
         android:id="@+id/newsfeedListView"
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/mainActivityHeaderText"/>
+        />
 
 
     <TextView

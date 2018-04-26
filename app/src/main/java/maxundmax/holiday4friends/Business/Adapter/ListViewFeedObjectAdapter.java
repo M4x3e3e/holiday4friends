@@ -8,11 +8,18 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.joda.time.DateTime;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
 
 import maxundmax.holiday4friends.Business.FirebaseMethods;
 import maxundmax.holiday4friends.Business.HolidayObject;
 import maxundmax.holiday4friends.Business.MediaObject;
+import maxundmax.holiday4friends.Business.ParserHelper;
 import maxundmax.holiday4friends.MainActivity;
 import maxundmax.holiday4friends.R;
 
@@ -20,7 +27,7 @@ import maxundmax.holiday4friends.R;
  * Created by Max on 18.04.2018.
  */
 
-public class ListViewFeedObjectAdapter extends BaseAdapter  {
+public class ListViewFeedObjectAdapter extends BaseAdapter {
 
     private ArrayList<MediaObject> mediaObjects;
     private ArrayList<HolidayObject> holidayObjects;
@@ -51,24 +58,49 @@ public class ListViewFeedObjectAdapter extends BaseAdapter  {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        view = inflater.inflate(R.layout.custom_media_listview_layout,null);
+        view = inflater.inflate(R.layout.custom_media_listview_layout, null);
 
-        ImageView imageView = (ImageView)view.findViewById(R.id.overviewMediaImageViewer);
-        TextView textViewName = (TextView)view.findViewById(R.id.overviewMediaTextViewName);
-        TextView textViewDescription = (TextView)view.findViewById(R.id.overviewMediaTextViewDescription);
+        ImageView imageView = (ImageView) view.findViewById(R.id.overviewMediaImageViewer);
+        TextView textViewName = (TextView) view.findViewById(R.id.overviewMediaTextViewName);
+        TextView textViewDescription = (TextView) view.findViewById(R.id.overviewMediaTextViewDescription);
+
+        TextView dayTimeTextView = (TextView) view.findViewById(R.id.textViewTime);
+        TextView timeTextView = (TextView) view.findViewById(R.id.overviewMediaTimeTextView);
 
         textViewName.setText(getHolidayName(mediaObjects.get(i).getHoliday_id()));
         textViewDescription.setText(mediaObjects.get(i).getDescription());
-        if(mediaObjects.get(i).getImage() == null) {
+        String feedTime = "";
+        if (i == 0) {
+            feedTime = ParserHelper.ParsStringToFeed(mediaObjects.get(i).getTimestamp());
+            dayTimeTextView.setText(feedTime);
+            dayTimeTextView.setVisibility(View.VISIBLE);
+        }
+        else{
+            if(!ParserHelper.ParsStringToFeed(mediaObjects.get(i).getTimestamp()).equals(ParserHelper.ParsStringToFeed(mediaObjects.get(i-1).getTimestamp()))){
+                feedTime = ParserHelper.ParsStringToFeed(mediaObjects.get(i).getTimestamp());
+                dayTimeTextView.setText(feedTime);
+                dayTimeTextView.setVisibility(View.VISIBLE);
+            }
+
+        }
+
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        timeTextView.setText(sdf.format(mediaObjects.get(i).getTimestamp()));
+
+        if (mediaObjects.get(i).getImage() == null) {
             FirebaseMethods.downloadImageIntoImageView(imageView, mediaObjects.get(i));
-        }else{
+        } else {
             imageView.setImageBitmap(mediaObjects.get(i).getImage());
-        } return view;
+        }
+        return view;
     }
 
-    private String getHolidayName(String holidayId){
-        for (HolidayObject h: holidayObjects) {
-            if(h.getId().equals(holidayId)) {
+
+
+    private String getHolidayName(String holidayId) {
+        for (HolidayObject h : holidayObjects) {
+            if (h.getId().equals(holidayId)) {
                 return h.getName();
             }
         }
