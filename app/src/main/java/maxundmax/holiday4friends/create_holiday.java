@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -52,7 +53,7 @@ public class create_holiday extends AppCompatActivity
 
 
     private Button buttonSave;
-    private Button chooseImage;
+    private ImageButton chooseImage;
     private ImageView imageView;
     EditText holiday_name;
     EditText activity_description;

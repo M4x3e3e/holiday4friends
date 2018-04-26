@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout"
@@ -10,81 +10,55 @@
 
     <EditText
         android:id="@+id/activity_name"
-        android:layout_width="0dp"
-        android:layout_height="44dp"
-        android:layout_marginBottom="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="11dp"
         android:hint="Geben Sie einen Namen an."
-        android:autoSizeTextType="uniform"
-        android:singleLine="true"
-        app:layout_constraintBottom_toTopOf="@+id/activity_description"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_conversion_absoluteHeight="64dp"
-        tools:layout_conversion_absoluteWidth="384dp" />
+        android:singleLine="true" />
 
     <EditText
         android:id="@+id/activity_description"
-        android:layout_width="0dp"
-        android:layout_height="65dp"
-        android:layout_marginBottom="5dp"
-        android:hint="Geben Sie eine Beschreibung an."
-        android:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toTopOf="@+id/btn_image_selector"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_name"
-        tools:layout_conversion_absoluteHeight="142dp"
-        tools:layout_conversion_absoluteWidth="384dp" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
 
-    <Button
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/activity_name"
+        android:hint="Geben Sie eine Beschreibung an." />
+
+    <ImageButton
         android:id="@+id/btn_image_selector"
-        android:layout_width="238dp"
-        android:layout_height="41dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginStart="2dp"
-        android:text="Titelbild hinzufügen"
-        app:layout_constraintBottom_toTopOf="@+id/image_viewer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_description"
-        tools:layout_conversion_absoluteHeight="66dp"
-        tools:layout_conversion_absoluteWidth="384dp" />
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:adjustViewBounds="true"
+        android:layout_centerInParent="true"
+        android:background="@drawable/circular"
+        android:src="@drawable/ic_add_a_photo_black_24dp"
+        android:tint="@color/colorAccent"
+        android:scaleType="centerCrop"/>
 
     <ImageView
         android:id="@+id/image_viewer"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="215dp"
-        android:layout_marginBottom="18dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginStart="4dp"
-        android:adjustViewBounds="false"
-        android:cropToPadding="false"
-        android:scaleType="fitXY"
-        app:layout_constraintBottom_toTopOf="@+id/button_write"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_image_selector"
-        app:srcCompat="@drawable/ic_menu_gallery"
-        tools:layout_conversion_absoluteHeight="1dp"
-        tools:layout_conversion_absoluteWidth="384dp" />
+
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/activity_description"
+        android:layout_above="@id/button_write"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+
+    />
 
     <Button
         android:id="@+id/button_write"
         style="@style/FirebaseUI.Button"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginBottom="6dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginStart="2dp"
-        android:text="Speichern"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_viewer"
-        tools:layout_conversion_absoluteHeight="65dp"
-        tools:layout_conversion_absoluteWidth="384dp" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:text="Speichern" />
 
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

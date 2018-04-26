@@ -25,15 +25,14 @@ import maxundmax.holiday4friends.R;
  * Created by Max on 18.04.2018.
  */
 
-public class ListViewMediaObjectAdapter extends BaseAdapter
-    implements View.OnClickListener{
+public class ListViewMediaObjectAdapter extends BaseAdapter {
 
     private ArrayList<MediaObject> mdList;
     private Context context;
     private boolean isOwnerList;
-    public ListViewMediaObjectAdapter(ArrayList<MediaObject> _mdList, Context _context, boolean _isOwnerList)
-    {
-       mdList = _mdList;
+
+    public ListViewMediaObjectAdapter(ArrayList<MediaObject> _mdList, Context _context, boolean _isOwnerList) {
+        mdList = _mdList;
         context = _context;
         isOwnerList = _isOwnerList;
 
@@ -59,8 +58,7 @@ public class ListViewMediaObjectAdapter extends BaseAdapter
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        view = inflater.inflate(R.layout.custom_media_listview_layout,null);
-
+        view = inflater.inflate(R.layout.custom_media_listview_layout, null);
 
 
         ImageView imageView = view.findViewById(R.id.overviewMediaImageViewer);
@@ -72,67 +70,54 @@ public class ListViewMediaObjectAdapter extends BaseAdapter
         textViewName.setText(mdList.get(i).getName());
         textViewDescription.setText(mdList.get(i).getDescription());
         TextView timeTextView = (TextView) view.findViewById(R.id.overviewMediaTimeTextView);
-        if(isOwnerList){
-            btnDelete.setVisibility(View.VISIBLE);
-            btnDelete.setOnClickListener(this);
-            btnDelete.setTag(mdList.get(i).getId());
 
+        if (mdList.get(i).getImage() == null) {
+            FirebaseMethods.downloadImageIntoImageView(imageView, mdList.get(i));
+        } else {
+            imageView.setImageBitmap(mdList.get(i).getImage());
+        }
+
+        final MediaObject mdObject = mdList.get(i);
+        if (isOwnerList) {
+            btnDelete.setVisibility(View.VISIBLE);
+            btnDelete.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (view.getId() == R.id.overviewMediaBtnDelete) {
+                                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                                        context);
+                                alertDialogBuilder
+                                        .setTitle("Möchten Sie wirklich löschen?")
+                                        .setCancelable(false)
+                                        .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                // Do something with parameter.
+                                                deleteMedia(mdObject);
+                                            }
+                                        })
+                                        .setNegativeButton("Nein",
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        dialog.cancel();
+                                                    }
+                                                });
+                                AlertDialog alertDialog = alertDialogBuilder.create();
+                                alertDialog.show();
+                            }
+                        }
+                    });
         }
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         timeTextView.setText(sdf.format(mdList.get(i).getTimestamp()));
-        if(mdList.get(i).getImage() == null) {
-            FirebaseMethods.downloadImageIntoImageView(imageView, mdList.get(i));
-        }else{
-            imageView.setImageBitmap(mdList.get(i).getImage());
-        }
+
         return view;
     }
 
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.overviewMediaBtnDelete) {
-            ImageButton btn = view.findViewById(R.id.overviewMediaBtnDelete);
 
-            final String someParameter = btn.getTag().toString();
-
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                    context);
-            alertDialogBuilder
-                    .setTitle("Are you sure?")
-                    .setCancelable(false)
-                    .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // Do something with parameter.
-                            deleteMedia(someParameter);
-                        }
-                    })
-                    .setNegativeButton("Nein",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-
-            // create alert dialog
-            AlertDialog alertDialog = alertDialogBuilder.create();
-
-            // show it
-            alertDialog.show();
-        }
-
-    }
-
-
-    private void deleteMedia(String mediaObjectId) {
-        for (int i = 0; i< mdList.size();i++) {
-            if(mdList.get(i).getId().equals(mediaObjectId)){
-                mdList.get(i).deleteMedieFromFirebase();
-                mdList.remove(i);
-                notifyDataSetChanged();
-                break;
-            }
-
-        }
-
+    private void deleteMedia(MediaObject mediaObject) {
+        mediaObject.deleteMedieFromFirebase();
+        mdList.remove(mediaObject);
+        notifyDataSetChanged();
     }
 }

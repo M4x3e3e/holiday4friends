@@ -99,6 +99,7 @@ public class myHolidays_activity extends AppCompatActivity {
 
             }
         });
+
         listView.setAdapter(adap);
     }
 

@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -97,6 +99,25 @@ public class SubscriptionObject extends UploadebleObject {
         map.put("timestamp", Calendar.getInstance().getTime());
 
         return map;
+    }
+
+    public void delete() {
+
+        FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+
+        mFirestore.collection(SUBSCRIPTION_COLLECTION).document(this.id).delete().
+                addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting document", e);
+                    }
+                });
     }
 }
 

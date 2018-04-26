@@ -20,6 +20,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity
     private static final String SUBSCRIPTION_COLLECTION = "subscription";
 
     private ProgressBar progressBar;
+    private RelativeLayout splashScreen;
     private static ArrayList<SubscriptionObject> subscriptionObjects = new ArrayList<>();
     private static ArrayList<HolidayObject> holidayObjects = new ArrayList<>();
     private static ArrayList<MediaObject> mediaObjects = new ArrayList<>();
@@ -97,6 +99,8 @@ public class MainActivity extends AppCompatActivity
 
     private void Initialize(){
 
+        splashScreen = findViewById(R.id.splashLogo);
+        splashScreen.setVisibility(View.VISIBLE);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500);
         animation.setDuration(3000); // in milliseconds
@@ -258,6 +262,7 @@ public class MainActivity extends AppCompatActivity
 
         progressBar.clearAnimation();
         progressBar.setVisibility(View.GONE);
+        splashScreen.setVisibility(View.GONE);
     }
 
 
@@ -406,5 +411,6 @@ TODO:
         Löschen aller Objekte
         Subscription zurück nehmen
         Strings in Resource File
+        Kommentare im Code LEL
 */
 

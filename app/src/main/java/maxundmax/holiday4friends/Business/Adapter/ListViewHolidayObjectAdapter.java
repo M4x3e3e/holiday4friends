@@ -10,6 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -71,34 +72,65 @@ public class ListViewHolidayObjectAdapter extends BaseAdapter
         TextView textViewName = (TextView)view.findViewById(R.id.overviewHolidayTextViewName);
         TextView textViewDescription = (TextView)view.findViewById(R.id.overviewHolidayTextViewDescription);
         ImageButton btnSubscription = (ImageButton)view.findViewById(R.id.overviewHolidayBtnSubscription);
-        ImageView imageViewSubscriped = view.findViewById(R.id.overviewHolidayImageViewSubscription);
+        ImageButton btnDelete = (ImageButton)view.findViewById(R.id.overviewHolidayBtnDelete);
+        RelativeLayout container = view.findViewById(R.id.holidayContainer);
 
-        if(!isOwnerList && acList.get(i).getSubscriptionObject() == null){
-            btnSubscription.setVisibility(View.VISIBLE);
-            final int id = i;
-            btnSubscription.setOnClickListener(new View.OnClickListener() {
+
+
+
+        if(i % 2 == 1) {
+            container.setBackgroundResource(R.color.colorPrimaryLight);
+        }
+        final int id = i;
+        btnSubscription.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                SetHolidaySubscription(acList.get(id));
+            }
+        });
+
+        if(isOwnerList){
+            btnDelete.setVisibility(View.VISIBLE);
+            btnDelete.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    SetHolidaySubscription(acList.get(id));
+
                 }
             });
-        }
-        if(!isOwnerList && acList.get(i).getSubscriptionObject() != null) {
-            imageViewSubscriped.setVisibility(View.VISIBLE);
+
         }
 
-        textViewName.setText(acList.get(i).getName() + "("+acList.get(i).getSubscribeCount().value+")");
+        if(!isOwnerList && acList.get(i).getSubscriptionObject() == null){
+
+            btnSubscription.setImageResource(R.drawable.ic_add_circle_black_24dp);
+            btnSubscription.setVisibility(View.VISIBLE);
+
+
+        }
+        if(!isOwnerList && acList.get(i).getSubscriptionObject() != null) {
+            btnSubscription.setImageResource(R.drawable.ic_check_circle_black_24dp);
+            btnSubscription.setVisibility(View.VISIBLE);
+        }
+
+        textViewName.setText(acList.get(i).getName());
         textViewDescription.setText(acList.get(i).getDescription());
         FirebaseMethods.downloadImageIntoImageView(imageView,acList.get(i));
         return view;
     }
 
     private void SetHolidaySubscription(HolidayObject holidayObject){
-        SubscriptionObject subscriptionObject = new SubscriptionObject();
-        subscriptionObject.setHoliday_id(holidayObject.getId());
-        subscriptionObject.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        subscriptionObject.uploadSubScriptionToFirebase(context);
-        holidayObject.setSubscriptionObject(subscriptionObject);
-        this.notifyDataSetChanged();
+
+        if(holidayObject.getSubscriptionObject() == null) {
+            SubscriptionObject subscriptionObject = new SubscriptionObject();
+            subscriptionObject.setHoliday_id(holidayObject.getId());
+            subscriptionObject.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            subscriptionObject.uploadSubScriptionToFirebase(context);
+            holidayObject.setSubscriptionObject(subscriptionObject);
+            this.notifyDataSetChanged();
+        } else {
+            SubscriptionObject obj = holidayObject.getSubscriptionObject();
+            holidayObject.setSubscriptionObject(null);
+            obj.delete();
+            this.notifyDataSetChanged();
+        }
     }
 
 
