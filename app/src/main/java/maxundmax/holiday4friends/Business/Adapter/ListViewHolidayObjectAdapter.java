@@ -1,7 +1,9 @@
 package maxundmax.holiday4friends.Business.Adapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.MutableInt;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 
 import maxundmax.holiday4friends.Business.HolidayObject;
 import maxundmax.holiday4friends.Business.FirebaseMethods;
+import maxundmax.holiday4friends.Business.MediaObject;
 import maxundmax.holiday4friends.Business.SubscriptionObject;
 import maxundmax.holiday4friends.R;
 
@@ -74,12 +77,17 @@ public class ListViewHolidayObjectAdapter extends BaseAdapter
         ImageButton btnSubscription = (ImageButton)view.findViewById(R.id.overviewHolidayBtnSubscription);
         ImageButton btnDelete = (ImageButton)view.findViewById(R.id.overviewHolidayBtnDelete);
         RelativeLayout container = view.findViewById(R.id.holidayContainer);
+        TextView subscriptions = view.findViewById(R.id.overviewHolidaySubscriptions);
+        ImageView checkMark = view.findViewById(R.id.checkMark);
 
+        if(acList.get(i).getSubscribeCount() > 0){
+            subscriptions.setVisibility(View.VISIBLE);
+            subscriptions.setText("Bereits "+acList.get(i).getSubscribeCount()+"mal abonniert.");
 
-
+        }
 
         if(i % 2 == 1) {
-            container.setBackgroundResource(R.color.colorPrimaryLight);
+            container.setBackgroundResource(R.color.colorPrimary);
         }
         final int id = i;
         btnSubscription.setOnClickListener(new View.OnClickListener() {
@@ -88,26 +96,21 @@ public class ListViewHolidayObjectAdapter extends BaseAdapter
             }
         });
 
-        if(isOwnerList){
-            btnDelete.setVisibility(View.VISIBLE);
-            btnDelete.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
+        final HolidayObject hObj = acList.get(i);
 
-                }
-            });
 
-        }
 
         if(!isOwnerList && acList.get(i).getSubscriptionObject() == null){
 
-            btnSubscription.setImageResource(R.drawable.ic_add_circle_black_24dp);
+            btnSubscription.setImageResource(R.drawable.ic_notifications_active_black_24dp);
             btnSubscription.setVisibility(View.VISIBLE);
-
 
         }
         if(!isOwnerList && acList.get(i).getSubscriptionObject() != null) {
-            btnSubscription.setImageResource(R.drawable.ic_check_circle_black_24dp);
+            btnSubscription.setImageResource(R.drawable.ic_notifications_off_black_24dp);
             btnSubscription.setVisibility(View.VISIBLE);
+            checkMark.setVisibility(View.VISIBLE);
+
         }
 
         textViewName.setText(acList.get(i).getName());
@@ -124,9 +127,12 @@ public class ListViewHolidayObjectAdapter extends BaseAdapter
             subscriptionObject.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
             subscriptionObject.uploadSubScriptionToFirebase(context);
             holidayObject.setSubscriptionObject(subscriptionObject);
+            holidayObject.setSubscribeCount(holidayObject.getSubscribeCount()+1);
             this.notifyDataSetChanged();
         } else {
             SubscriptionObject obj = holidayObject.getSubscriptionObject();
+
+            holidayObject.setSubscribeCount(holidayObject.getSubscribeCount()-1);
             holidayObject.setSubscriptionObject(null);
             obj.delete();
             this.notifyDataSetChanged();

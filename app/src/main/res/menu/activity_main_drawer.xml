@@ -7,24 +7,24 @@
         <item
             android:id="@+id/nav_create_activity"
             android:icon="@drawable/ic_flight_takeoff_black_24dp"
-            android:title="Neue Aktivität" />
+            android:title="@string/neuer_urlaub" />
 
         <item
             android:id="@+id/nav_subscription_activity"
             android:icon="@drawable/ic_group_black_24dp"
-            android:title="Abonnements" />
+            android:title="@string/abonnements" />
         <item
         android:id="@+id/nav_myHolidays_activity"
         android:icon="@drawable/ic_beach_access_black_24dp"
-        android:title="Meine Urlaube" />
+        android:title="@string/meine_urlaube" />
     </group>
-    <item android:title="Logout">
+    <item android:title="@string/logout">
         <menu>
             <item
                 android:id="@+id/nav_logout"
                 android:enabled="true"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Logout" />
+                android:icon="@drawable/ic_exit_to_app_black_24dp"
+                android:title="@string/logout" />
 
         </menu>
     </item>

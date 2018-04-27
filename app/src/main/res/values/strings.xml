@@ -6,4 +6,17 @@
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_my_activities">Meine Aktivitäten</string>
+    <string name="neuer_urlaub">Neuer Urlaub</string>
+    <string name="abonnements">Abonnements</string>
+    <string name="meine_urlaube">Meine Urlaube</string>
+    <string name="logout">Logout</string>
+    <string name="geben_sie_einen_namen_an">Geben Sie einen Namen an.</string>
+    <string name="geben_sie_eine_beschreibung_an">Geben Sie eine Beschreibung an.</string>
+    <string name="speichern">Speichern</string>
+    <string name="addimagetoholiday">AddImageToHoliday</string>
+    <string name="deleteholiday">DeleteHoliday</string>
+    <string name="modifyholiday">ModifyHoliday</string>
+    <string name="viewsubscriptions">ViewSubscriptions</string>
+    <string name="viewholidays">ViewHolidays</string>
+    <string name="addholiday">AddHoliday</string>
 </resources>

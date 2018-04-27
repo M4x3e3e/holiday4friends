@@ -5,7 +5,6 @@
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="maxundmax.holiday4friends.create_holiday">
 
     <EditText
@@ -15,7 +14,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="11dp"
-        android:hint="Geben Sie einen Namen an."
+        android:hint="@string/geben_sie_einen_namen_an"
         android:singleLine="true" />
 
     <EditText
@@ -25,7 +24,7 @@
 
         android:layout_marginTop="20dp"
         android:layout_below="@+id/activity_name"
-        android:hint="Geben Sie eine Beschreibung an." />
+        android:hint="@string/geben_sie_eine_beschreibung_an" />
 
     <ImageButton
         android:id="@+id/btn_image_selector"
@@ -41,7 +40,7 @@
     <ImageView
         android:id="@+id/image_viewer"
         android:layout_width="match_parent"
-        android:layout_height="215dp"
+        android:layout_height="wrap_content"
 
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/activity_description"
@@ -58,7 +57,7 @@
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:text="Speichern" />
+        android:text="@string/speichern" />
 
 
 </RelativeLayout>

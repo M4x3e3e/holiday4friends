@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import maxundmax.holiday4friends.Business.FirebaseMethods;
 import maxundmax.holiday4friends.Business.HolidayObject;
 import maxundmax.holiday4friends.Business.MediaObject;
+import maxundmax.holiday4friends.Business.ParserHelper;
 import maxundmax.holiday4friends.R;
 
 /**
@@ -111,6 +112,22 @@ public class ListViewMediaObjectAdapter extends BaseAdapter {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         timeTextView.setText(sdf.format(mdList.get(i).getTimestamp()));
 
+        TextView dayTimeTextView = (TextView) view.findViewById(R.id.textViewTime);
+
+        String feedTime = "";
+        if (i == 0) {
+            feedTime = ParserHelper.ParsStringToFeed(mdList.get(i).getTimestamp());
+            dayTimeTextView.setText(feedTime);
+            dayTimeTextView.setVisibility(View.VISIBLE);
+        }
+        else{
+            if(!ParserHelper.ParsStringToFeed(mdList.get(i).getTimestamp()).equals(ParserHelper.ParsStringToFeed(mdList.get(i-1).getTimestamp()))){
+                feedTime = ParserHelper.ParsStringToFeed(mdList.get(i).getTimestamp());
+                dayTimeTextView.setText(feedTime);
+                dayTimeTextView.setVisibility(View.VISIBLE);
+            }
+
+        }
         return view;
     }
 

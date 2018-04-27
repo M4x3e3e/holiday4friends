@@ -19,8 +19,7 @@
     <RelativeLayout
         android:id="@+id/rtLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignTop="@id/textViewTime">
+        android:layout_height="match_parent"      >
 
         <ProgressBar
             android:id="@+id/overviewMediaImageVewerProgress"
@@ -59,7 +58,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="17dp"
-            android:text="TextView" />
+          />
 
         <TextView
             android:id="@+id/overviewMediaTimeTextView"
@@ -74,17 +73,19 @@
 
         <ImageButton
             android:id="@+id/overviewMediaBtnDelete"
-            style="@android:style/Widget.DeviceDefault.Light.ImageButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:background="@drawable/roundcorner"
+            android:backgroundTint="#cc333333"
+            android:tint="#ffffff"
+            android:foregroundTint="#ffffff"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/circular"
-            android:foregroundTint="#ffffff"
-            android:padding="0dp"
+
+            android:padding="5dp"
             android:scaleType="centerCrop"
+            android:layout_margin="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:visibility="gone"
-            android:tint="@color/colorAccent"
             app:srcCompat="@drawable/ic_delete_forever_black_24dp" />
     </RelativeLayout>
 

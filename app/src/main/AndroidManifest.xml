@@ -4,14 +4,14 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_flight_takeoff_black_24dp"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/ic_flight_takeoff_black_24dp"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="Neuigkeiten"
+            android:label="holiday4friends"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -23,6 +23,7 @@
         <activity android:name=".holiday_overview" android:label="Urlaubs Übersicht" android:screenOrientation="portrait" />
         <activity android:name=".subscription_activity" android:label="Urlaube abonnieren" android:screenOrientation="portrait" />
         <activity android:name=".myHolidays_activity" android:label="Meine Urlaube" android:screenOrientation="portrait" />
+        <activity android:name=".modify_holiday" android:label="Urlaub bearbeiten" android:screenOrientation="portrait" />
 
     </application>
 

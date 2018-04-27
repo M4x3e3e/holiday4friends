@@ -115,7 +115,7 @@ public class subscription_activity extends AppCompatActivity {
                                 }
                             }
                         }
-                        renderActivites();
+                        LoadSubscriptionCounts();
                         return;
                     }
                 })
@@ -125,6 +125,36 @@ public class subscription_activity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Error getting data!!!", Toast.LENGTH_LONG).show();
                     }
                 });
+    }
+
+    private void LoadSubscriptionCounts() {
+        mFirestore.collection(SUBSCRIPTION_COLLECTION).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                        if (documentSnapshots.isEmpty()) {
+                        } else {
+                            List<SubscriptionObject> subscriptionObjects = documentSnapshots.toObjects(SubscriptionObject.class);
+                            for (HolidayObject h: mArrayList) {
+                                for (SubscriptionObject s: subscriptionObjects) {
+                                    if(s.getHoliday_id().equals(h.getId()))
+                                    {
+                                        h.setSubscribeCount(h.getSubscribeCount()+1);
+                                    }
+                                }
+                            }
+                        }
+
+                        renderActivites();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "Error getting data!!!", Toast.LENGTH_LONG).show();
+                    }
+                });
+
     }
 
     private void renderActivites() {

@@ -14,6 +14,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,6 +31,11 @@ import java.util.Map;
  */
 
 public class HolidayObject extends UploadebleObject {
+
+    private final String SUBSCRIPTION_COLLECTION = "subscription";
+    private final String HOLIDAY_COLLECTION = "holiday";
+
+    private final String TAG = "HolidayObject";
 
 
     public String getId() {
@@ -100,30 +110,16 @@ public class HolidayObject extends UploadebleObject {
         this.imagepath = imagePath;
     }
 
-    public MutableInt getSubscribeCount() {
+    public int getSubscribeCount() {
+    return subscriptionCount;
 
-        FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
-        mFirestore.collection("subscription").whereEqualTo("holiday_id", this.getId()).get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot documentSnapshots) {
-                        if (documentSnapshots.isEmpty()) {
 
-                            return;
-                        } else {
-                            List<SubscriptionObject> acObjs = documentSnapshots.toObjects(SubscriptionObject.class);
-                            subCount.value = acObjs.size();
-                            return;
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+    }
 
-                    }
-                });
-        return subCount;
+
+    public void setSubscribeCount(int subscriptionCount) {
+        this.subscriptionCount = subscriptionCount;
+
 
     }
 
@@ -148,7 +144,7 @@ public class HolidayObject extends UploadebleObject {
 
     private SubscriptionObject subscriptionObject;
 
-    private MutableInt subCount;
+    private int subscriptionCount;
 
     private String id;
     private String owner_id;
@@ -177,8 +173,7 @@ public class HolidayObject extends UploadebleObject {
 
     public HolidayObject() {
         mediaList = new ArrayList<>();
-
-        this.subCount = new MutableInt(0);
+        this.subscriptionCount = 0;
     }
 
     @Override
@@ -195,4 +190,56 @@ public class HolidayObject extends UploadebleObject {
         map.put("imagepath", this.imagepath);
         return map;
     }
+
+    public void deleteHolidayFromFirebase() {
+        FirebaseMethods.deleteImageFromFirebase(this.imagepath);
+        FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+
+        for (MediaObject mediaObject : mediaList) {
+            mediaObject.deleteMedieFromFirebase();
+        }
+        DeleteAllSubscriptions();
+        delete();
+    }
+
+    public void DeleteAllSubscriptions() {
+        FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+        mFirestore.collection(SUBSCRIPTION_COLLECTION).whereEqualTo("holiday_id", this.getId()).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                        if (documentSnapshots.isEmpty()) {
+                            Log.d(TAG, "onSuccess: LIST EMPTY");
+                        } else {
+                            List<SubscriptionObject> subscriptionObjectList = documentSnapshots.toObjects(SubscriptionObject.class);
+                            for (SubscriptionObject sub: subscriptionObjectList) {
+                                sub.delete();
+                            }
+                        }
+
+                        return;
+                    }
+                });
+
+
+    }
+
+    public void delete(){
+        FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+        mFirestore.collection(HOLIDAY_COLLECTION).document(this.id).delete().
+                addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting document", e);
+                    }
+                });
+
+    }
+
 }

@@ -48,7 +48,7 @@ import maxundmax.holiday4friends.Business.SubscriptionObject;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener{
 
     private static final int RC_SIGN_IN = 123;
     private static final int CREATE_HOLIDAY = 12;
@@ -73,34 +73,32 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        setNavigationViewListener();
+        setContentView(R.layout.activity_main); //Setze ContentView
+
         mFirestore = FirebaseFirestore.getInstance();
-        mCtx = this;
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         Login();
 
+        splashScreen = findViewById(R.id.splashLogo);
+        splashScreen.setVisibility(View.VISIBLE);
 
-
+        findViewById(R.id.footerBtnAddHoliday).setOnClickListener(this);
+        findViewById(R.id.footerBtnHolidays).setOnClickListener(this);
+        findViewById(R.id.footerBtnSubscriptions).setOnClickListener(this);
 
 
     }
 
     private void Initialize(){
 
-        splashScreen = findViewById(R.id.splashLogo);
-        splashScreen.setVisibility(View.VISIBLE);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500);
         animation.setDuration(3000); // in milliseconds
@@ -109,6 +107,9 @@ public class MainActivity extends AppCompatActivity
         animation.setInterpolator(new DecelerateInterpolator());
         animation.start();
 
+        mediaObjects.clear();
+        subscriptionObjects.clear();
+        holidayObjects.clear();
 
 
         getSubscriptions();
@@ -129,11 +130,7 @@ public class MainActivity extends AppCompatActivity
                 RC_SIGN_IN);
     }
 
-    private void setNavigationViewListener() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
-    }
 
     private void getSubscriptions() {
         mFirestore.collection(SUBSCRIPTION_COLLECTION).whereEqualTo("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid()).get()
@@ -143,7 +140,7 @@ public class MainActivity extends AppCompatActivity
                         subscriptionObjects.clear();
                         if (documentSnapshots.isEmpty()) {
                             Log.d(TAG, "onSuccess: LIST EMPTY");
-                            Initialize();
+                            EndInitialize();
                         } else {
                             List<SubscriptionObject> subscriptionObjectList = documentSnapshots.toObjects(SubscriptionObject.class);
                             subscriptionObjects.addAll(subscriptionObjectList);
@@ -171,7 +168,7 @@ public class MainActivity extends AppCompatActivity
                         holidayObjects.clear();
                         if (documentSnapshots.isEmpty()) {
                             Log.d(TAG, "onSuccess: LIST EMPTY");
-                            Initialize();
+                            EndInitialize();
                         } else {
                             List<HolidayObject> holidayObjectList = documentSnapshots.toObjects(HolidayObject.class);
 
@@ -235,7 +232,7 @@ public class MainActivity extends AppCompatActivity
         {
             ListView emptyView = findViewById(R.id.newsfeedListView);
             TextView txtView = (TextView) findViewById(R.id.newsfeedTextView);
-            txtView.setText("Keine Neuigkeiten.");
+            txtView.setText("Hier siehst du Beiträge von abonnierten Urlauben. Bisher keine Beiträge vorhanden.");
             emptyView.setEmptyView(txtView);
         }
 
@@ -332,23 +329,11 @@ public class MainActivity extends AppCompatActivity
             }
 
         }
-    }
+        else if (requestCode == SUBSCRIPTION_VIEW) {
+                Initialize();
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
         }
-
-        return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -395,9 +380,21 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public void onClick(View v) {
 
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.footerBtnAddHoliday) {
+            CreateHoliday();
+
+        }
+        if (view.getId()  == R.id.footerBtnSubscriptions) {
+            OpenSubscriptionView();
+
+        }
+        if (view.getId()  == R.id.footerBtnHolidays) {
+            OpenMyHolidaysView();
+
+        }
     }
 }
 
@@ -405,11 +402,11 @@ public class MainActivity extends AppCompatActivity
 TODO:
 
         Foto Cache implementieren !
-        Splash Screen --> LOGO
+        Splash Screen --> LOGO !
         Neuigkeiten --> Tage angezeigt werden !
         Statistiken zu den Urlauben (Abbos)
-        Löschen aller Objekte
-        Subscription zurück nehmen
+        Löschen aller Objekte !
+        Subscription zurück nehmen !
         Strings in Resource File
         Kommentare im Code LEL
 */

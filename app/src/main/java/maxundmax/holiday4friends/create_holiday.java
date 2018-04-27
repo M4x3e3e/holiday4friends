@@ -30,12 +30,14 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.UUID;
 
 import maxundmax.holiday4friends.Business.FirebaseMethods;
 import maxundmax.holiday4friends.Business.HolidayObject;
+import maxundmax.holiday4friends.Business.LocalPhotoCache;
 
 
 public class create_holiday extends AppCompatActivity
@@ -43,7 +45,7 @@ public class create_holiday extends AppCompatActivity
 
     private static final String HOLIDAY_COLLECTION = "holiday";
     private static final String TAG = "CreateActivity";
-
+    private ProgressDialog progressDialog;
     private final int PICK_IMAGE_REQUEST = 7;
     private Uri filePath;
 
@@ -65,6 +67,7 @@ public class create_holiday extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_holiday);
+        progressDialog = new ProgressDialog(create_holiday.this);
 
         // FireBase Objects
         mFirestore = FirebaseFirestore.getInstance();
@@ -111,38 +114,20 @@ public class create_holiday extends AppCompatActivity
             return;
 
         }
-        actualActivity.setImagepath(FirebaseMethods.uploadImageToFirebase(filePath,this));
 
+        progressDialog.setTitle("Hochladen...");
+        progressDialog.show();
+        actualActivity.setImagepath(uploadImageToFirebase(filePath,this));
         actualActivity.setPublic(true);// TODO: Am Anfang alle Stories Offen, später private möglich
-
         actualActivity.setStartdate(Calendar.getInstance().getTime());
         actualActivity.setOwner_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
         String id = mFirestore.collection(HOLIDAY_COLLECTION).document().getId();
         actualActivity.setId(id);
-
-        Task<Void> voidTask = mFirestore.collection(HOLIDAY_COLLECTION)
-                .document(id)
-                .set(actualActivity.getDataMap())
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Log.d(TAG, "write:onComplete");
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "write:onComplete:failed", task.getException());
-                        }
-                        else
-                        {
-                            finishThis(RESULT_OK);
-                        }
-                    }
-                });
-
-
-
     }
 
     private void finishThis(int resCode){
         setResult(resCode);
+
         finish();
     }
 
@@ -179,6 +164,82 @@ public class create_holiday extends AppCompatActivity
                 e.printStackTrace();
             }
         }
+    }
+
+    public String uploadImageToFirebase(Uri filePath, Context context) {
+        if (filePath != null) {
+
+
+            try {
+                String path = "images/" + UUID.randomUUID().toString();
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), filePath);
+                LocalPhotoCache.AddImage(path, bitmap);
+
+                int height = bitmap.getHeight();
+                int width = bitmap.getWidth();
+                float ratio = (float) height / width;
+
+                int newWidth = 1920;
+                int newHeight = (int) ((float) newWidth * ratio);
+
+
+                Bitmap resizeBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+                resizeBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+
+                byte[] data = byteArrayOutputStream.toByteArray();
+
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference ref = storage.getReference().child(path);
+                ref.putBytes(data)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                               UploadHoliday();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                //progressDialog.dismiss();
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                //double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+                                //progressDialog.setMessage("Hochgeladen " + (int) progress + "%");
+                            }
+                        });
+
+                return ref.getPath();
+            } catch (IOException ex) {
+
+            }
+        }
+        return "";
+
+    }
+
+    private void UploadHoliday() {
+        Task<Void> voidTask = mFirestore.collection(HOLIDAY_COLLECTION)
+                .document(actualActivity.getId())
+                .set(actualActivity.getDataMap())
+                .addOnCompleteListener(create_holiday.this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d(TAG, "write:onComplete");
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "write:onComplete:failed", task.getException());
+                        }
+                        else
+                        {
+                            progressDialog.cancel();
+                            finishThis(RESULT_OK);
+                        }
+                    }
+                });
     }
 
 }

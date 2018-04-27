@@ -23,39 +23,39 @@
         android:id="@+id/newsfeedListView"
 
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        />
+        android:layout_height="wrap_content"
+        android:layout_above="@id/footer"
+        android:layout_alignParentStart="true" />
 
 
     <TextView
         android:id="@+id/newsfeedTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30dp"
-
         android:layout_marginLeft="20dp"
+
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
+        android:textSize="30sp"
 
         />
 
     <RelativeLayout
+        android:id="@+id/splashLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:id="@+id/splashLogo"
-        android:visibility="visible"
-        >
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="360dp"
             android:layout_height="360dp"
+            android:layout_centerInParent="true"
             android:layout_marginLeft="2dp"
             android:src="@drawable/logo_text"
-            android:layout_centerInParent="true"
 
-           />
+            />
+
         <ProgressBar
             android:id="@+id/progressBar"
             style="@style/Widget.AppCompat.ProgressBar"
@@ -63,8 +63,61 @@
             android:layout_width="125dp"
             android:layout_height="125dp"
             android:layout_centerHorizontal="true"
-            android:visibility="visible"
-            android:layout_marginTop="72dp"/>
+            android:layout_marginTop="72dp"
+            android:visibility="visible" />
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:background="@color/colorPrimaryDark"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <ImageButton
+            android:id="@+id/footerBtnAddHoliday"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+
+
+            android:layout_alignParentStart="true"
+            android:backgroundTint="@color/colorPrimary"
+            android:contentDescription="@string/addholiday"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_flight_takeoff_black_24dp"
+            android:tint="#ffffff" />
+
+        <ImageButton
+            android:id="@+id/footerBtnSubscriptions"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:backgroundTint="@color/colorPrimary"
+            android:contentDescription="@string/viewsubscriptions"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_group_black_24dp"
+            android:tint="#ffffff" />
+
+        <ImageButton
+            android:id="@+id/footerBtnHolidays"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:backgroundTint="@color/colorPrimary"
+            android:contentDescription="@string/viewholidays"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_beach_access_black_24dp"
+            android:tint="#ffffff" />
+
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

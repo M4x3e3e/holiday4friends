@@ -12,37 +12,57 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="13dp"
-        android:ems="10"
-        android:inputType="textPersonName" />
+        android:layout_marginTop="11dp"
+        android:hint="@string/geben_sie_einen_namen_an"
+        android:singleLine="true" />
 
     <EditText
         android:id="@+id/modifyHolidayDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/modifyHolidayName"
+
+        android:layout_marginTop="20dp"
         android:layout_below="@+id/modifyHolidayName"
-        android:layout_marginTop="15dp"
-        android:ems="10"
-        android:inputType="textPersonName" />
+        android:hint="@string/geben_sie_eine_beschreibung_an" />
+
+
 
     <ImageView
-        android:id="@+id/modifyHolidayImageView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_alignStart="@+id/modifyHolidayDescription"
+        android:id="@+id/modifyHolidayImageViewer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/modifyHolidayDescription"
-        android:scaleType="fitXY"
-        app:srcCompat="@drawable/ic_menu_camera" />
+        android:layout_above="@id/modifyHolidayBtnSave"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+
+        />
+
+    <ImageButton
+        android:id="@+id/modifyHolidayBtnImageSelektor"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:adjustViewBounds="true"
+        android:layout_above="@id/modifyHolidayBtnSave"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/roundcorner"
+        android:backgroundTint="#cc333333"
+        android:padding="5dp"
+        android:layout_marginEnd="5dp"
+        android:src="@drawable/ic_party_mode_black_24dp"
+        android:tint="#ffffff"
+        android:scaleType="centerCrop"/>
 
     <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/modifyHolidayImageView"
+        android:id="@+id/modifyHolidayBtnSave"
+        style="@style/FirebaseUI.Button"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="75dp"
-        android:layout_marginEnd="32dp"
-        android:text="Bild ändern" />
+        android:text="@string/speichern" />
+
 
 </RelativeLayout>

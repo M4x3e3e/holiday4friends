@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/holidayContainer"
-    android:background="@color/colorPrimaryDark">
+    android:background="@color/colorPrimaryDark"
+    android:descendantFocusability="blocksDescendants">
 
     <FrameLayout
         android:layout_width="70dp"
@@ -17,21 +18,23 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
-        android:id="@+id/frameLayout"
-        >
-
+        android:id="@+id/frameLayout">
         <ImageView
             android:id="@+id/overviewHolidayImageViewer"
             android:scaleType="fitXY"
-
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="6dp"/>
-
         <ImageView
-            android:src="@drawable/rounded_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:padding="6dp"
+            android:src="@drawable/fui_done_check_mark"
+
+            android:id="@+id/checkMark"
+            android:visibility="gone"
+            />
+
     </FrameLayout>
 
 
@@ -49,38 +52,12 @@
         android:textColor="#ffffff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/frameLayout"
+        android:layout_below="@id/overviewHolidayTextViewName"
         android:layout_alignStart="@+id/overviewHolidayTextViewName"
         android:layout_marginRight="70dp"
         android:layout_marginTop="2dp"
-        android:text="TextView" />
+        />
 
-    <ImageButton
-        android:id="@+id/overviewHolidayBtnSubscription"
-        style="@style/Widget.AppCompat.ImageButton"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-
-        android:layout_alignParentEnd="true"
-        android:backgroundTint="@color/cardview_shadow_end_color"
-
-        android:scaleType="centerCrop"
-        android:tint="@color/colorAccent"
-        android:visibility="gone"
-        app:srcCompat="@drawable/ic_add_circle_black_24dp" />
-
-    <ImageButton
-        android:id="@+id/overviewHolidayBtnDelete"
-        style="@android:style/Widget.DeviceDefault.Light.ImageButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignParentEnd="true"
-        android:backgroundTint="@color/cardview_shadow_end_color"
-
-        android:scaleType="centerCrop"
-        android:tint="@color/colorAccent"
-        android:visibility="gone"
-        app:srcCompat="@drawable/ic_delete_forever_black_24dp" />
 
     <TextView
         android:id="@+id/overviewHolidayTextViewStatus"
@@ -89,8 +66,34 @@
         android:visibility="gone"
         android:layout_alignEnd="@+id/frameLayout"
         android:layout_below="@+id/frameLayout"
-        android:text="TextView" />
+        />
+
+    <ImageButton
+        android:id="@+id/overviewHolidayBtnSubscription"
+        style="@style/Widget.AppCompat.ImageButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:backgroundTint="@color/cardview_shadow_end_color"
+        android:scaleType="centerCrop"
+        android:tint="#ffffff"
+        android:visibility="gone"
+        android:padding="5dp"
+        app:srcCompat="@drawable/ic_notifications_active_black_24dp" />
 
 
+
+
+    <TextView
+        android:id="@+id/overviewHolidaySubscriptions"
+        android:textColor="#ffffff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/overviewHolidayTextViewDescription"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="2dp"
+        android:visibility="gone"
+        />
 
 </RelativeLayout>

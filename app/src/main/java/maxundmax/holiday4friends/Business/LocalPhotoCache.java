@@ -24,7 +24,7 @@ public class LocalPhotoCache {
         photoCache.put(imagepath,image);
     }
 
-    public static void RemoveImage( String imagepath,Bitmap image){
+    public static void RemoveImage( String imagepath){
         photoCache.remove(imagepath);
     }
 
