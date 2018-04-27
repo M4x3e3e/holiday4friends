@@ -48,7 +48,7 @@ import maxundmax.holiday4friends.Business.SubscriptionObject;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener{
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private static final int RC_SIGN_IN = 123;
     private static final int CREATE_HOLIDAY = 12;
@@ -73,9 +73,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main); //Setze ContentView
+        setContentView(R.layout.activity_main);
+        //Setze ContentView
 
+        //Get Firestore getInstance()
         mFirestore = FirebaseFirestore.getInstance();
+
+        //Setzen der Events für die Menüs
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -85,20 +89,22 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        //Aufrufen der Login Methode
         Login();
 
+        //Anzeigen des Splashscreen (Logo h4f)
         splashScreen = findViewById(R.id.splashLogo);
         splashScreen.setVisibility(View.VISIBLE);
 
+        //Click Event Footer Buttons
         findViewById(R.id.footerBtnAddHoliday).setOnClickListener(this);
         findViewById(R.id.footerBtnHolidays).setOnClickListener(this);
         findViewById(R.id.footerBtnSubscriptions).setOnClickListener(this);
-
-
     }
 
-    private void Initialize(){
-
+    private void Initialize() {
+        //Prograssbar Starten
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500);
         animation.setDuration(3000); // in milliseconds
@@ -107,21 +113,22 @@ public class MainActivity extends AppCompatActivity
         animation.setInterpolator(new DecelerateInterpolator());
         animation.start();
 
+        //Objekt Listen leeren
         mediaObjects.clear();
         subscriptionObjects.clear();
         holidayObjects.clear();
 
-
+        //Hole alle Subscriptions von Firebase
         getSubscriptions();
     }
 
     private void Login() {
-        // Choose authentication providers
+        // Festlegen von Authentifikations Provider
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
-               );
+        );
 
-        // Create and launch sign-in intent
+        // Erstellen und Aufrufen des Firebase Login Intent
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
@@ -131,13 +138,15 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
+    //Methode zum Abrufen der Subscription Datensätze von Firebase
+    //Sollte eigentlich in eine Extra Klasse ausgelagert sein, aber aufgrund der aktuellen Datenstruktur und Nutzung hier implementiert
     private void getSubscriptions() {
+        //
         mFirestore.collection(SUBSCRIPTION_COLLECTION).whereEqualTo("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid()).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot documentSnapshots) {
-                        subscriptionObjects.clear();
+
                         if (documentSnapshots.isEmpty()) {
                             Log.d(TAG, "onSuccess: LIST EMPTY");
                             EndInitialize();
@@ -158,14 +167,16 @@ public class MainActivity extends AppCompatActivity
                 });
     }
 
+
+
+    //Methode zum Abrufen der Holiday Datensätze von Firebase
+    //Sollte eigentlich in eine Extra Klasse ausgelagert sein, aber aufgrund der aktuellen Datenstruktur und Nutzung hier implementiert
     private void getHoliday(final List<SubscriptionObject> subs) {
-
-
         mFirestore.collection(HOLIDAY_COLLECTION).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot documentSnapshots) {
-                        holidayObjects.clear();
+
                         if (documentSnapshots.isEmpty()) {
                             Log.d(TAG, "onSuccess: LIST EMPTY");
                             EndInitialize();
@@ -194,74 +205,53 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    //Methode zum Abrufen der Media Datensätze von Firebase
+    //Sollte eigentlich in eine Extra Klasse ausgelagert sein, aber aufgrund der aktuellen Datenstruktur und Nutzung hier implementiert
     private void getMedia() {
-
         mFirestore.collection(MEDIA_COLLECTION).orderBy("timestamp", Query.Direction.DESCENDING).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-        @Override
-        public void onSuccess(QuerySnapshot documentSnapshots) {
-            mediaObjects.clear();
-            if (documentSnapshots.isEmpty()) {
-                Log.d(TAG, "onSuccess: LIST EMPTY");
-            } else {
-                List<MediaObject> mediaObjectList = documentSnapshots.toObjects(MediaObject.class);
+                    @Override
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                        if (documentSnapshots.isEmpty()) {
+                            Log.d(TAG, "onSuccess: LIST EMPTY");
+                        } else {
+                            List<MediaObject> mediaObjectList = documentSnapshots.toObjects(MediaObject.class);
 
-                for (MediaObject o : mediaObjectList) {
-                    for (HolidayObject s : holidayObjects) {
-                        if (o.getHoliday_id().equals(s.getId())) {
-                            mediaObjects.add(o);
+                            //
+                            for (MediaObject o : mediaObjectList) {
+                                for (HolidayObject s : holidayObjects) {
+                                    if (o.getHoliday_id().equals(s.getId())) {
+                                        mediaObjects.add(o);
+                                    }
+                                }
+                            }
                         }
+                        EndInitialize();
+                        return;
                     }
-                }
-            }
-            EndInitialize();
-            return;
-        }
-    })
-            .addOnFailureListener(new OnFailureListener() {
-        @Override
-        public void onFailure(@NonNull Exception e) {
-            Toast.makeText(getApplicationContext(), "Error getting data!!!", Toast.LENGTH_LONG).show();
-        }
-    });
-
-}
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "Error getting data!!!", Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
 
     private void EndInitialize() {
-        if(mediaObjects.size() <= 0)
-        {
-            ListView emptyView = findViewById(R.id.newsfeedListView);
-            TextView txtView = (TextView) findViewById(R.id.newsfeedTextView);
-            txtView.setText("Hier siehst du Beiträge von abonnierten Urlauben. Bisher keine Beiträge vorhanden.");
-            emptyView.setEmptyView(txtView);
+        ListView listView = findViewById(R.id.newsfeedListView);
+        if (mediaObjects.size() <= 0) {
+            TextView txtView = findViewById(R.id.newsfeedTextView);
+            txtView.setText(R.string.KeineEintraegeMain);
+            listView.setEmptyView(txtView);
+        } else {
+            ListViewFeedObjectAdapter adapt = new ListViewFeedObjectAdapter(mediaObjects, holidayObjects, this);
+            listView.setAdapter(adapt);
         }
-
-        final ListView listView = (ListView) findViewById(R.id.newsfeedListView);
-        ListViewFeedObjectAdapter adap = new ListViewFeedObjectAdapter(mediaObjects,holidayObjects, this);
-       /*  listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-           @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                HolidayObject selectedAC = (HolidayObject) listView.getItemAtPosition(i);
-
-                Intent intent = new Intent(mCtx, holiday_overview.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivityForResult(intent, HOLIDAY_OVERVIEW);
-                intent.putExtra("id", selectedAC.getId());
-                startActivity(intent);
-            }
-
-
-            public void onNothingSelected(AdapterView parentView) {
-
-            }
-        });*/
-        listView.setAdapter(adap);
-
         progressBar.clearAnimation();
         progressBar.setVisibility(View.GONE);
         splashScreen.setVisibility(View.GONE);
     }
-
 
 
     private void OpenSubscriptionView() {
@@ -328,9 +318,8 @@ public class MainActivity extends AppCompatActivity
                 // ...
             }
 
-        }
-        else if (requestCode == SUBSCRIPTION_VIEW) {
-                Initialize();
+        } else if (requestCode == SUBSCRIPTION_VIEW) {
+            Initialize();
 
         }
     }
@@ -387,11 +376,11 @@ public class MainActivity extends AppCompatActivity
             CreateHoliday();
 
         }
-        if (view.getId()  == R.id.footerBtnSubscriptions) {
+        if (view.getId() == R.id.footerBtnSubscriptions) {
             OpenSubscriptionView();
 
         }
-        if (view.getId()  == R.id.footerBtnHolidays) {
+        if (view.getId() == R.id.footerBtnHolidays) {
             OpenMyHolidaysView();
 
         }
