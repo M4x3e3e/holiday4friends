@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -41,6 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import maxundmax.holiday4friends.Business.Adapter.ListViewFeedObjectAdapter;
+import maxundmax.holiday4friends.Business.GPSAdapter;
 import maxundmax.holiday4friends.Business.HolidayObject;
 import maxundmax.holiday4friends.Business.Adapter.ListViewHolidayObjectAdapter;
 import maxundmax.holiday4friends.Business.MediaObject;
@@ -101,6 +103,11 @@ public class MainActivity extends AppCompatActivity
         findViewById(R.id.footerBtnAddHoliday).setOnClickListener(this);
         findViewById(R.id.footerBtnHolidays).setOnClickListener(this);
         findViewById(R.id.footerBtnSubscriptions).setOnClickListener(this);
+
+        double latitude = GPSAdapter.getLatitude();
+        double longitude = GPSAdapter.getLongitude();
+
+
     }
 
     private void Initialize() {

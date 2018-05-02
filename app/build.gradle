@@ -40,6 +40,7 @@ dependencies {
     compile 'joda-time:joda-time:2.9.4'
 
 
+    implementation 'com.google.android.gms:play-services-maps:15.0.0'
 }
 
 

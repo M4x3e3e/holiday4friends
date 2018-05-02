@@ -20,7 +20,13 @@ public class LocalPhotoCache {
             return true;
     }
 
+    /**
+     *
+     * @param imagepath Is the key
+     * @param image
+     */
     public static void AddImage(String imagepath,Bitmap image){
+
         photoCache.put(imagepath,image);
     }
 

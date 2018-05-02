@@ -32,12 +32,14 @@ import java.util.Map;
 
 public class HolidayObject extends UploadebleObject {
 
+    //Firebase Collection Names
     private final String SUBSCRIPTION_COLLECTION = "subscription";
     private final String HOLIDAY_COLLECTION = "holiday";
 
+    //TAG
     private final String TAG = "HolidayObject";
 
-
+    //Getter und Setter
     public String getId() {
         return id;
     }
@@ -110,19 +112,10 @@ public class HolidayObject extends UploadebleObject {
         this.imagepath = imagePath;
     }
 
-    public int getSubscribeCount() {
-    return subscriptionCount;
+    public int getSubscribeCount() { return subscriptionCount; }
 
 
-    }
-
-
-    public void setSubscribeCount(int subscriptionCount) {
-        this.subscriptionCount = subscriptionCount;
-
-
-    }
-
+    public void setSubscribeCount(int subscriptionCount) { this.subscriptionCount = subscriptionCount; }
 
     public ArrayList<MediaObject> getMediaList() {
         return mediaList;
@@ -157,25 +150,20 @@ public class HolidayObject extends UploadebleObject {
 
     private String imagepath;
 
-    public HolidayObject(String _id, String _ownerId, String _name, String _description, Date _startdate, Date _enddate, Boolean _isPublic, Date _timestamp, String _imagePath) {
-        super();
-        this.id = _id;
-        this.owner_id = _ownerId;
-        this.name = _name;
-        this.description = _description;
-        this.startdate = _startdate;
-        this.enddate = _enddate;
-        this.isPublic = _isPublic;
-        this.timestamp = _timestamp;
-        this.imagepath = _imagePath;
 
-    }
-
+    /**
+     * Konstruktor
+     */
     public HolidayObject() {
         mediaList = new ArrayList<>();
         this.subscriptionCount = 0;
     }
 
+
+    /**
+     * Gibt eine HashMap mit den Eigenschaften des Holiday Objektes zurück
+     * @return HashMap mit allen Eigenschaften
+     */
     @Override
     public Map getDataMap() {
         Map<String, Object> map = new HashMap<>();
@@ -191,6 +179,9 @@ public class HolidayObject extends UploadebleObject {
         return map;
     }
 
+    /**
+     * Löscht den Urlaub aus der Firebase DB und die dazu gehörigen Subscriptions und Media Datensätze
+     */
     public void deleteHolidayFromFirebase() {
         FirebaseMethods.deleteImageFromFirebase(this.imagepath);
         FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
@@ -202,7 +193,10 @@ public class HolidayObject extends UploadebleObject {
         delete();
     }
 
-    public void DeleteAllSubscriptions() {
+    /**
+     * Löscht alle Subscriptions zu diesem Holiday Objekt aus der Firebase DB
+     */
+    private void DeleteAllSubscriptions() {
         FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
         mFirestore.collection(SUBSCRIPTION_COLLECTION).whereEqualTo("holiday_id", this.getId()).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -224,7 +218,10 @@ public class HolidayObject extends UploadebleObject {
 
     }
 
-    public void delete(){
+    /**
+     * Löscht das Holiday Objekt aus der Firebase DB
+     */
+    private void delete(){
         FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
         mFirestore.collection(HOLIDAY_COLLECTION).document(this.id).delete().
                 addOnSuccessListener(new OnSuccessListener<Void>() {

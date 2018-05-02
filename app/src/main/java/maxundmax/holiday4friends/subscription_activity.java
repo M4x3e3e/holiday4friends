@@ -41,7 +41,7 @@ import maxundmax.holiday4friends.Business.SubscriptionObject;
 
 public class subscription_activity extends AppCompatActivity {
 
-
+    // static Vars
     private static final String TAG = "subscription_activity";
     private static final String HOLIDAY_COLLECTION = "holiday";
 
@@ -60,7 +60,7 @@ public class subscription_activity extends AppCompatActivity {
         getHolidayCollection();
     }
 
-
+    //Holt alle Holiday Objekte aus der Firebase DB
     private void getHolidayCollection() {
         mFirestore.collection(HOLIDAY_COLLECTION).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -78,9 +78,9 @@ public class subscription_activity extends AppCompatActivity {
                                     mArrayList.add(holidayObject);
                                 }
                             }
-                            if(mArrayList.size() <= 0){
+                            if (mArrayList.size() <= 0) {
                                 ListView emptyView = findViewById(R.id.holidaySubscriptionListView);
-                                TextView txtView = (TextView)findViewById(R.id.holidaySubscriptionTextView);
+                                TextView txtView = (TextView) findViewById(R.id.holidaySubscriptionTextView);
                                 txtView.setText("Keine Urlaube zum Abonnieren vorhanden.");
                                 emptyView.setEmptyView(txtView);
                             }
@@ -96,7 +96,7 @@ public class subscription_activity extends AppCompatActivity {
                 });
     }
 
-
+    //Holt alle Subscription Objekte aus der Firebase DB , welche die UserID des aktuellen Nutzer haben
     private void getSubscriptionData() {
         mFirestore.collection(SUBSCRIPTION_COLLECTION).whereEqualTo("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid()).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -127,6 +127,7 @@ public class subscription_activity extends AppCompatActivity {
                 });
     }
 
+    //Holt alle Subscriptions und berechnet die Anzahl
     private void LoadSubscriptionCounts() {
         mFirestore.collection(SUBSCRIPTION_COLLECTION).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -135,11 +136,10 @@ public class subscription_activity extends AppCompatActivity {
                         if (documentSnapshots.isEmpty()) {
                         } else {
                             List<SubscriptionObject> subscriptionObjects = documentSnapshots.toObjects(SubscriptionObject.class);
-                            for (HolidayObject h: mArrayList) {
-                                for (SubscriptionObject s: subscriptionObjects) {
-                                    if(s.getHoliday_id().equals(h.getId()))
-                                    {
-                                        h.setSubscribeCount(h.getSubscribeCount()+1);
+                            for (HolidayObject h : mArrayList) {
+                                for (SubscriptionObject s : subscriptionObjects) {
+                                    if (s.getHoliday_id().equals(h.getId())) {
+                                        h.setSubscribeCount(h.getSubscribeCount() + 1);
                                     }
                                 }
                             }
@@ -157,6 +157,8 @@ public class subscription_activity extends AppCompatActivity {
 
     }
 
+
+    //Nach dem Daten Holen wird die UI Entsprechend gebindet
     private void renderActivites() {
         final ListView listView = (ListView) findViewById(R.id.holidaySubscriptionListView);
         ListViewHolidayObjectAdapter adap = new ListViewHolidayObjectAdapter(mArrayList, this, false);
