@@ -48,9 +48,15 @@ public class subscription_activity extends AppCompatActivity {
     private static final int HOLIDAY_OVERVIEW = 13;
     private static final String SUBSCRIPTION_COLLECTION = "subscription";
     private Context mCtx;
+    //ArrayList für Holiday Objekte
     private static ArrayList<HolidayObject> mArrayList = new ArrayList<>();
+    //Firebase FireStore Objekt
     FirebaseFirestore mFirestore;
 
+    /**
+     * On Create Methode für aktuelle Activity
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +66,10 @@ public class subscription_activity extends AppCompatActivity {
         getHolidayCollection();
     }
 
-    //Holt alle Holiday Objekte aus der Firebase DB
+
+    /**
+     * Holt alle Holiday Objekte aus der Firebase DB
+     */
     private void getHolidayCollection() {
         mFirestore.collection(HOLIDAY_COLLECTION).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -96,7 +105,9 @@ public class subscription_activity extends AppCompatActivity {
                 });
     }
 
-    //Holt alle Subscription Objekte aus der Firebase DB , welche die UserID des aktuellen Nutzer haben
+    /**
+     * Holt alle Subscription Objekte aus der Firebase DB , welche die UserID des aktuellen Nutzer haben
+     */
     private void getSubscriptionData() {
         mFirestore.collection(SUBSCRIPTION_COLLECTION).whereEqualTo("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid()).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -127,7 +138,9 @@ public class subscription_activity extends AppCompatActivity {
                 });
     }
 
-    //Holt alle Subscriptions und berechnet die Anzahl
+    /**
+     * Holt alle Subscriptions und berechnet die Anzahl
+     */
     private void LoadSubscriptionCounts() {
         mFirestore.collection(SUBSCRIPTION_COLLECTION).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -157,8 +170,10 @@ public class subscription_activity extends AppCompatActivity {
 
     }
 
+    /**
+     * Nach dem Daten Holen wird die UI Entsprechend gebindet
+     */
 
-    //Nach dem Daten Holen wird die UI Entsprechend gebindet
     private void renderActivites() {
         final ListView listView = (ListView) findViewById(R.id.holidaySubscriptionListView);
         ListViewHolidayObjectAdapter adap = new ListViewHolidayObjectAdapter(mArrayList, this, false);

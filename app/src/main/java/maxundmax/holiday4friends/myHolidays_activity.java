@@ -31,16 +31,21 @@ import maxundmax.holiday4friends.Business.SubscriptionObject;
 
 public class myHolidays_activity extends AppCompatActivity {
 
-
+    //Lokale private Variablen
     private static final String TAG = "subscription_activity";
     private static final String HOLIDAY_COLLECTION = "holiday";
     private static final String SUBSCRIPTION_COLLECTION = "subscription";
 
     private static final int HOLIDAY_OVERVIEW = 13;
     private static final int CREATE_HOLIDAY = 14;
+    //ArrayList der Holiday Objekte
     private static ArrayList<HolidayObject> mArrayList = new ArrayList<>();
     FirebaseFirestore mFirestore;
 
+    /**
+     * On Create Methode der aktuellen Activity
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +54,9 @@ public class myHolidays_activity extends AppCompatActivity {
         getHolidayCollection();
     }
 
-
+    /**
+     * Hole alle Holiday des aktuellen Nutzers
+     */
     private void getHolidayCollection() {
         mFirestore.collection(HOLIDAY_COLLECTION).whereEqualTo("owner_id", FirebaseAuth.getInstance().getCurrentUser().getUid()).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -60,7 +67,7 @@ public class myHolidays_activity extends AppCompatActivity {
 
                             ListView emptyView = findViewById(R.id.myHolidayListView);
                             TextView txtView = (TextView)findViewById(R.id.myHolidayTextView);
-                            txtView.setText("Du hast keine Urlaube angelegt.");
+                            txtView.setText(R.string.Keine_Urlaube);
                             emptyView.setEmptyView(txtView);
                             Log.d(TAG, "onSuccess: LIST EMPTY");
                         } else {
@@ -79,6 +86,9 @@ public class myHolidays_activity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Holt alle Subscriptions der Holidays und setzt den Count entsprechend
+     */
     private void LoadSubscriptionCounts() {
         mFirestore.collection(SUBSCRIPTION_COLLECTION).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -109,7 +119,9 @@ public class myHolidays_activity extends AppCompatActivity {
 
     }
 
-
+    /**
+     * Initialisiert die UI
+     */
     private void Initialize() {
         final ListView listView = (ListView) findViewById(R.id.myHolidayListView);
         ListViewHolidayObjectAdapter adap = new ListViewHolidayObjectAdapter(mArrayList, this, true);
@@ -144,6 +156,12 @@ public class myHolidays_activity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Activity Result Methode
+     * @param requestCode Der Empfangene RequestCode
+     * @param resultCode Der Empfangene ResultCode
+     * @param data Daten die Von der Activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

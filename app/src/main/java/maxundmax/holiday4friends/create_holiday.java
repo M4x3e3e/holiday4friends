@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.UUID;
 
-import maxundmax.holiday4friends.Business.FirebaseMethods;
 import maxundmax.holiday4friends.Business.HolidayObject;
 import maxundmax.holiday4friends.Business.LocalPhotoCache;
 
@@ -43,17 +42,22 @@ import maxundmax.holiday4friends.Business.LocalPhotoCache;
 public class create_holiday extends AppCompatActivity
         implements View.OnClickListener {
 
+    // Firebase Collection Name
     private static final String HOLIDAY_COLLECTION = "holiday";
     private static final String TAG = "CreateActivity";
+
+    // Locale Private Variablen
     private ProgressDialog progressDialog;
     private final int PICK_IMAGE_REQUEST = 7;
     private Uri filePath;
 
+
+    //Firebase Objekte
     private FirebaseFirestore mFirestore;
     private FirebaseStorage storage;
     private StorageReference storageReference;
 
-
+    // UI Elemente
     private Button buttonSave;
     private ImageButton chooseImage;
     private ImageView imageView;
@@ -63,6 +67,10 @@ public class create_holiday extends AppCompatActivity
 
     private HolidayObject actualActivity;
 
+    /**
+     * On Create Methode
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +98,10 @@ public class create_holiday extends AppCompatActivity
         chooseImage.setOnClickListener(this);
     }
 
-    private void onWriteClicked() {
+    /**
+     * Speichert den neuen Urlaub
+     */
+    private void SaveNewHoliday() {
         //Check
 
         actualActivity.setName(holiday_name.getText().toString());
@@ -117,6 +128,8 @@ public class create_holiday extends AppCompatActivity
 
         progressDialog.setTitle("Hochladen...");
         progressDialog.show();
+
+        // Lädt das Bild in den Firebase Storage Hoch
         actualActivity.setImagepath(uploadImageToFirebase(filePath,this));
         actualActivity.setPublic(true);// TODO: Am Anfang alle Stories Offen, später private möglich
         actualActivity.setStartdate(Calendar.getInstance().getTime());
@@ -125,6 +138,10 @@ public class create_holiday extends AppCompatActivity
         actualActivity.setId(id);
     }
 
+    /**
+     * Beendet die Create Holiday Activity
+     * @param resCode Der Result Code
+     */
     private void finishThis(int resCode){
         setResult(resCode);
 
@@ -132,11 +149,15 @@ public class create_holiday extends AppCompatActivity
     }
 
 
+    /**
+     * OnClick Event für die Activity
+     * @param v Sendende View
+     */
     @Override
     public void onClick(View v) {
 
         if (v.getId() == R.id.button_write) {
-            onWriteClicked();
+            SaveNewHoliday();
         }
 
         if (v.getId() == R.id.btn_image_selector) {
@@ -144,6 +165,9 @@ public class create_holiday extends AppCompatActivity
         }
     }
 
+    /**
+     * Startet einen Intent zum auswählen eines Bildes
+     */
     private void onImageSelectorClicked() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -151,6 +175,13 @@ public class create_holiday extends AppCompatActivity
         startActivityForResult(Intent.createChooser(intent, "Bild auswählen"), PICK_IMAGE_REQUEST);
     }
 
+
+    /**
+     * Activity Result Methode
+     * @param requestCode Der Empfangene RequestCode
+     * @param resultCode Der Empfangene ResultCode
+     * @param data Daten die Von der Activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -166,6 +197,12 @@ public class create_holiday extends AppCompatActivity
         }
     }
 
+    /**
+     * Lädt ein Bild vom lokalen Gerät in den Firebase Storage hoch. Das Bild wird dabei komprimiert und verkleinert.
+     * @param filePath Der lokale Bildpfad
+     * @param context Context der aufrufenden Activity
+     * @return Firebase Storage Filepath
+     */
     public String uploadImageToFirebase(Uri filePath, Context context) {
         if (filePath != null) {
 
@@ -214,14 +251,17 @@ public class create_holiday extends AppCompatActivity
                         });
 
                 return ref.getPath();
-            } catch (IOException ex) {
-
+            } catch (Exception ex) {
+                Toast.makeText(context, "Beim Hochladen ist leider ein Fehler aufgetreten. " + ex.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
         return "";
 
     }
 
+    /**
+     * Lädt den Holiday Datensatz in die Firebase Cloud Datenbank hoch
+     */
     private void UploadHoliday() {
         Task<Void> voidTask = mFirestore.collection(HOLIDAY_COLLECTION)
                 .document(actualActivity.getId())

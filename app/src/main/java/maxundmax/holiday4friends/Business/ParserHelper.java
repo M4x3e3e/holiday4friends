@@ -15,6 +15,11 @@ import java.util.Date;
 
 public class ParserHelper {
 
+    /**
+     * Parse String to Date
+     * @param str String Date
+     * @return Date Object
+     */
     public static Date StringToDate(String str){
 
         SimpleDateFormat parser =  new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
@@ -28,6 +33,11 @@ public class ParserHelper {
 
     }
 
+    /**
+     * Parse Date to Feed Time String
+     * @param timestamp Date Objekt
+     * @return Feed String
+     */
     public static String ParsStringToFeed(Date timestamp) {
         Date today = Calendar.getInstance().getTime();
         int todayDay = new DateTime(today).getDayOfYear();

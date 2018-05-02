@@ -42,7 +42,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import maxundmax.holiday4friends.Business.Adapter.ListViewFeedObjectAdapter;
-import maxundmax.holiday4friends.Business.GPSAdapter;
 import maxundmax.holiday4friends.Business.HolidayObject;
 import maxundmax.holiday4friends.Business.Adapter.ListViewHolidayObjectAdapter;
 import maxundmax.holiday4friends.Business.MediaObject;
@@ -52,26 +51,41 @@ import maxundmax.holiday4friends.Business.SubscriptionObject;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
+    //Activity Intent Request Codes
     private static final int RC_SIGN_IN = 123;
     private static final int CREATE_HOLIDAY = 12;
     private static final int MYHOLIDAYS_VIEW = 13;
     private static final int HOLIDAY_OVERVIEW = 14;
     private static final int SUBSCRIPTION_VIEW = 15;
 
+    //FirebaseFirestore Objekt
     private FirebaseFirestore mFirestore;
+
+    //Context
     private Context mCtx;
 
+    //TAG
     private static final String TAG = "MainActivity";
+
+    // Firebase Cloud DB Collection Strings
     private static final String MEDIA_COLLECTION = "media";
     private static final String HOLIDAY_COLLECTION = "holiday";
     private static final String SUBSCRIPTION_COLLECTION = "subscription";
 
+    //UI Elemente
     private ProgressBar progressBar;
     private RelativeLayout splashScreen;
+
+    //ArrayListen
     private static ArrayList<SubscriptionObject> subscriptionObjects = new ArrayList<>();
     private static ArrayList<HolidayObject> holidayObjects = new ArrayList<>();
     private static ArrayList<MediaObject> mediaObjects = new ArrayList<>();
 
+
+    /**
+     * On Create Methode der Activity
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,12 +118,15 @@ public class MainActivity extends AppCompatActivity
         findViewById(R.id.footerBtnHolidays).setOnClickListener(this);
         findViewById(R.id.footerBtnSubscriptions).setOnClickListener(this);
 
-        double latitude = GPSAdapter.getLatitude();
-        double longitude = GPSAdapter.getLongitude();
+
 
 
     }
 
+    /**
+     * Laden der benötigten Daten aus der Firebase Cloud DB
+     * Anzeigen der ProgressBar
+     */
     private void Initialize() {
         //Prograssbar Starten
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -129,6 +146,9 @@ public class MainActivity extends AppCompatActivity
         getSubscriptions();
     }
 
+    /**
+     * Login über den Firebase AuthUI Intent
+     */
     private void Login() {
         // Festlegen von Authentifikations Provider
         List<AuthUI.IdpConfig> providers = Arrays.asList(
@@ -145,8 +165,11 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    //Methode zum Abrufen der Subscription Datensätze von Firebase
+    /**
+     * Methode zum Abrufen der Subscription Datensätze von Firebase
+     */
     //Sollte eigentlich in eine Extra Klasse ausgelagert sein, aber aufgrund der aktuellen Datenstruktur und Nutzung hier implementiert
+
     private void getSubscriptions() {
         //
         mFirestore.collection(SUBSCRIPTION_COLLECTION).whereEqualTo("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid()).get()
@@ -176,7 +199,9 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    //Methode zum Abrufen der Holiday Datensätze von Firebase
+    /**
+     * Methode zum Abrufen der Holiday Datensätze von Firebase
+     */
     //Sollte eigentlich in eine Extra Klasse ausgelagert sein, aber aufgrund der aktuellen Datenstruktur und Nutzung hier implementiert
     private void getHoliday(final List<SubscriptionObject> subs) {
         mFirestore.collection(HOLIDAY_COLLECTION).get()
@@ -212,7 +237,9 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    //Methode zum Abrufen der Media Datensätze von Firebase
+    /**
+     * Methode zum Abrufen der Media Datensätze von Firebase
+     */
     //Sollte eigentlich in eine Extra Klasse ausgelagert sein, aber aufgrund der aktuellen Datenstruktur und Nutzung hier implementiert
     private void getMedia() {
         mFirestore.collection(MEDIA_COLLECTION).orderBy("timestamp", Query.Direction.DESCENDING).get()
@@ -245,6 +272,9 @@ public class MainActivity extends AppCompatActivity
                 });
     }
 
+    /**
+     * Nach Daten holen Ensprechende UI elemente Setzen und Progressbar ausblenden
+     */
     private void EndInitialize() {
         ListView listView = findViewById(R.id.newsfeedListView);
         if (mediaObjects.size() <= 0) {
@@ -260,25 +290,36 @@ public class MainActivity extends AppCompatActivity
         splashScreen.setVisibility(View.GONE);
     }
 
-
+    /**
+     * Startet Activity Intent für Subscription Overview
+     */
     private void OpenSubscriptionView() {
         Intent intent = new Intent(this, subscription_activity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivityForResult(intent, SUBSCRIPTION_VIEW);
     }
 
+    /**
+     * Startet Activity Intent für myHolodays
+     */
     private void OpenMyHolidaysView() {
         Intent intent = new Intent(this, myHolidays_activity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivityForResult(intent, MYHOLIDAYS_VIEW);
     }
 
+    /**
+     * Startet Activity Intent von Create_Holiday
+     */
     private void CreateHoliday() {
         Intent intent = new Intent(this, create_holiday.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivityForResult(intent, CREATE_HOLIDAY);
     }
 
+    /**
+     * Event wenn Zurück Taste gedrückt wird
+     */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -289,6 +330,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * On Create Options Menu
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -296,7 +342,12 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-
+    /**
+     * Activity Result Methode
+     * @param requestCode Der Empfangene RequestCode
+     * @param resultCode Der Empfangene ResultCode
+     * @param data Daten die Von der Activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -331,6 +382,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Item Selected Event für das Navigation Menu
+     * @param item Sendendes MenuItem
+     * @return
+     */
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -357,12 +413,18 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Setzt den NavigationView Item Selected Listener
+     */
     private void setNavigationViewListner() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
 
+    /**
+     * Logut des aktuellen Nutzers
+     */
     public void logout() {
         AuthUI.getInstance()
                 .signOut(this)
@@ -377,6 +439,10 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    /**
+     * On Click für aktuelle Activity
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.footerBtnAddHoliday) {
@@ -393,17 +459,4 @@ public class MainActivity extends AppCompatActivity
         }
     }
 }
-
-/*
-TODO:
-
-        Foto Cache implementieren !
-        Splash Screen --> LOGO !
-        Neuigkeiten --> Tage angezeigt werden !
-        Statistiken zu den Urlauben (Abbos)
-        Löschen aller Objekte !
-        Subscription zurück nehmen !
-        Strings in Resource File
-        Kommentare im Code LEL
-*/
 

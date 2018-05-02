@@ -26,7 +26,11 @@ import java.util.UUID;
 public class FirebaseMethods {
     private static final String HOLIDAY_COLLECTION = "activity";
 
-
+    /**
+     * Downloaded ein Bild vom Firebase Storage und setzt es beim übergebenen ImageView als Image
+     * @param v ImageView
+     * @param obj Media Objekt vom Image
+     */
     public static void downloadImageIntoImageView(final ImageView v, final MediaObject obj) {
         if (!LocalPhotoCache.ImageExists(obj.getImagepath()))// Reference to an image file in Firebase Storage
         {
@@ -55,6 +59,11 @@ public class FirebaseMethods {
         }
     }
 
+    /**
+     * Downloaded ein Bild vom Firebase Storage und setzt es beim übergebenen ImageView als Image
+     * @param v ImageView
+     * @param obj Holiday Objekt vom Image
+     */
     public static void downloadImageIntoImageView(final ImageView v, final HolidayObject obj) {
         if (!LocalPhotoCache.ImageExists(obj.getImagepath())) {
             FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -81,6 +90,10 @@ public class FirebaseMethods {
         }
     }
 
+    /**
+     * Löscht das Bild aus dem Firebase Storage
+     * @param imagePath Firebase Imagepath
+     */
     public static void deleteImageFromFirebase(String imagePath) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference ref = storage.getReference().child(imagePath);
@@ -88,11 +101,15 @@ public class FirebaseMethods {
         ref.delete();
     }
 
+    /**
+     * Lädt das übergebene Bild in den Firebase Storage Hoch
+     * @param filePath Lokaler Bildpfad
+     * @param context Context der aufrufenden Activity
+     * @return
+     */
     public static String uploadImageToFirebase(Uri filePath, Context context) {
         if (filePath != null) {
-            //final ProgressDialog progressDialog = new ProgressDialog(context);
-            //progressDialog.setTitle("Hochladen...");
-            //progressDialog.show();
+
 
             try {
                 String path = "images/" + UUID.randomUUID().toString();
@@ -116,26 +133,7 @@ public class FirebaseMethods {
 
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 StorageReference ref = storage.getReference().child(path);
-                ref.putBytes(data)
-                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                //progressDialog.dismiss();
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                //progressDialog.dismiss();
-                            }
-                        })
-                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                                //double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                                //progressDialog.setMessage("Hochgeladen " + (int) progress + "%");
-                            }
-                        });
+                ref.putBytes(data);
 
                 return ref.getPath();
             } catch (IOException ex) {

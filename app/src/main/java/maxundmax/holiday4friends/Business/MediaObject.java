@@ -33,6 +33,8 @@ public class MediaObject extends UploadebleObject {
     private static final String MEDIA_COLLECTION = "media";
     private HashMap mediaMap;
 
+
+    //Getter und Setter
     public String getName() {
         return name;
     }
@@ -103,11 +105,19 @@ public class MediaObject extends UploadebleObject {
     public MediaObject() {
     }
 
+    /**
+     * Konstruktir
+     * @param image Bild
+     * @param holiday_id Zugehörige Holiday ID
+     */
     public MediaObject(Bitmap image, String holiday_id) {
         this.image = image;
         this.holiday_id = holiday_id;
     }
 
+    /**
+     * Löscht den Datensatz aus der Cloud DB und das Bild aus dem Storage
+     */
     public void deleteMedieFromFirebase() {
         FirebaseMethods.deleteImageFromFirebase(this.imagepath);
         FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
@@ -128,6 +138,11 @@ public class MediaObject extends UploadebleObject {
 
     }
 
+    /**
+     * Lädt den Media Datensatz in die Firebase Cloud DB , und das Bild in den Sotrage
+     * @param path Lokaler Pfad zum Bold
+     * @param context Context der aufrufenden Activity
+     */
     public void uploadMediaToFirebase(Uri path, Activity context) {
         this.imagepath = FirebaseMethods.uploadImageToFirebase(path, context);
         FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
@@ -153,6 +168,10 @@ public class MediaObject extends UploadebleObject {
                 });
     }
 
+    /**
+     * Gibt HashMap mti den Eigenschaften des Objektes zurück
+     * @return
+     */
     @Override
     public Map getDataMap() {
         Map<String, Object> map = new HashMap<>();

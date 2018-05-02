@@ -20,4 +20,6 @@
     <string name="viewholidays">ViewHolidays</string>
     <string name="addholiday">AddHoliday</string>
     <string name="KeineEintraegeMain">Hier siehst du Beiträge von abonnierten Urlauben. Bisher <b>keine</b> Beiträge vorhanden.</string>
+    <string name="Keine_Urlaube">Du hast keine Urlaube angelegt.</string>
+
 </resources>

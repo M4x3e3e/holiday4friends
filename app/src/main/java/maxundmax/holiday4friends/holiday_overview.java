@@ -32,7 +32,6 @@ import java.util.List;
 
 import maxundmax.holiday4friends.Business.Adapter.ListViewMediaObjectAdapter;
 import maxundmax.holiday4friends.Business.FirebaseMethods;
-import maxundmax.holiday4friends.Business.GPSAdapter;
 import maxundmax.holiday4friends.Business.HolidayObject;
 import maxundmax.holiday4friends.Business.MediaObject;
 
@@ -41,12 +40,14 @@ import static android.app.Activity.RESULT_OK;
 public class holiday_overview extends AppCompatActivity
         implements View.OnClickListener {
 
+    //Private Lokale Variablen
     private HolidayObject hObj;
     private static final String MEDIA_COLLECTION = "media";
     private static final String HOLIDAY_COLLECTION = "holiday";
     private final int PICK_IMAGE_REQUEST = 7;
     private final int MODIFY_HOLIDAY = 13;
 
+    //UI Elemente
     TextView nameTbx;
     TextView descriptionTbx;
     ImageView imageView;
@@ -55,6 +56,10 @@ public class holiday_overview extends AppCompatActivity
     ListViewMediaObjectAdapter lvmoAdapater;
     String hId;
 
+    /**
+     * On CREATE Methode
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,11 +76,13 @@ public class holiday_overview extends AppCompatActivity
         LoadHolidayFromDB(hId);
     }
 
-    private void Initialize() {
+    /**
+     * Initialisiert die UI
+     */
+    private void Initialize(boolean isOwnerView) {
         nameTbx.setText(hObj.getName());
         descriptionTbx.setText(hObj.getDescription());
         FirebaseMethods.downloadImageIntoImageView(imageView, hObj);
-        boolean isOwnerView = hObj.getOwner_id().equals(FirebaseAuth.getInstance().getUid());
         ImageButton btnDelete = findViewById(R.id.overviewHolidayBtnDelete);
         if (isOwnerView) {
             btnModifyHoliday.setVisibility(View.VISIBLE);
@@ -140,6 +147,10 @@ public class holiday_overview extends AppCompatActivity
 
     }
 
+    /**
+     * Löscht den aktuellen Holiday und beendet die Activity
+     * @param holidayObject das zu löschende Holiday Objekt
+     */
     private void deleteHoliday(HolidayObject holidayObject) {
         holidayObject.deleteHolidayFromFirebase();
         setResult(42);
@@ -147,6 +158,10 @@ public class holiday_overview extends AppCompatActivity
     }
 
 
+    /**
+     * Lädt den Holiday mit der übergebenen Id von der Firebase Cloud Datenbank herunter
+     * @param id
+     */
     public void LoadHolidayFromDB(String id) {
         // FirebaseMethods.GetDataFromFirebase(this.hObj);
 
@@ -174,6 +189,10 @@ public class holiday_overview extends AppCompatActivity
 
     }
 
+    /**
+     * Lädt alle zum Übergebenen Holiday gehörigen Media Datensätze in absteigender Timestamp Reihenfolge herunter
+     * @param hOj
+     */
     public void LoadMediaFromDB(final HolidayObject hOj) {
         FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
         mFirestore.collection(MEDIA_COLLECTION).orderBy("timestamp", Query.Direction.DESCENDING).whereEqualTo("holiday_id", hOj.getId()).get()
@@ -194,7 +213,7 @@ public class holiday_overview extends AppCompatActivity
                             hObj.getMediaList().addAll(mObjs);
 
                         }
-                        Initialize();
+                        Initialize(hObj.getOwner_id().equals(FirebaseAuth.getInstance().getUid()));
                         return;
                     }
                 })
@@ -208,6 +227,10 @@ public class holiday_overview extends AppCompatActivity
 
     }
 
+    /**
+     * OnClick Event für die Activity
+     * @param v Sendende View
+     */
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btn_AddImageToHoliday) {
@@ -215,8 +238,10 @@ public class holiday_overview extends AppCompatActivity
         }
     }
 
+    /**
+     * Startet einen Intent zum auswählen eines Bildes
+     */
     private void AddPicturesToHoliday() {
-
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -225,6 +250,12 @@ public class holiday_overview extends AppCompatActivity
 
     }
 
+    /**
+     * Activity Result Methode
+     * @param requestCode Der Empfangene RequestCode
+     * @param resultCode Der Empfangene ResultCode
+     * @param data Daten die Von der Activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -235,11 +266,7 @@ public class holiday_overview extends AppCompatActivity
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 MediaObject mObj = new MediaObject(bitmap, this.hObj.getId());
-               ExifInterface ex;
-               // String lat = ex.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-               // String lon = ex.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-                double latitude = GPSAdapter.getLatitude();
-                double longitude = GPSAdapter.getLongitude();
+
                 mObj.uploadMediaToFirebase(filePath, this);
                 this.hObj.getMediaList().add(0,mObj);
                 lvmoAdapater.notifyDataSetChanged();

@@ -25,6 +25,8 @@ public class SubscriptionObject extends UploadebleObject {
     private final String SUBSCRIPTION_COLLECTION = "subscription";
     private final String TAG = "SubscriptionObject";
 
+
+    // Getter und Setter
     public String getId() {
         return id;
     }
@@ -62,10 +64,17 @@ public class SubscriptionObject extends UploadebleObject {
     private String user_id;
     private Date timestamp;
 
+    /**
+     * Leerer Konstruktor
+     */
     public SubscriptionObject() {
     }
 
 
+    /**
+     * Lädt die Subscription in die Firebase Cloud DB hoch
+     * @param context Aufrufende Activity
+     */
     public void uploadSubScriptionToFirebase(Activity context) {
         FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
 

@@ -82,7 +82,7 @@
             android:id="@+id/footerBtnAddHoliday"
             android:layout_width="125dp"
             android:layout_height="wrap_content"
-android:paddingTop="2dp"
+            android:paddingTop="2dp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:background="@color/colorPrimaryDark"
@@ -90,7 +90,7 @@ android:paddingTop="2dp"
 
             android:drawableTop="@drawable/ic_flight_takeoff_black_24dp"
 
-            android:text="Neuer Urlaub"
+            android:text="@string/neuer_urlaub"
             android:textColor="#e8e9e9"
             android:textSize="12sp"
             android:tint="#ffffff" />
@@ -106,7 +106,7 @@ android:paddingTop="2dp"
             android:background="@color/colorPrimaryDark"
             android:drawableTint="#ffffff"
             android:drawableTop="@drawable/ic_group_black_24dp"
-            android:text="Abonnements"
+            android:text="@string/abonnements"
             android:textColor="#e8e9e9"
             android:textSize="12sp"
             android:tint="#ffffff" />
@@ -120,55 +120,11 @@ android:paddingTop="2dp"
             android:paddingTop="2dp"
             android:background="@color/colorPrimaryDark"
             android:drawableTint="#ffffff"
-
             android:drawableTop="@drawable/ic_beach_access_black_24dp"
-
-            android:text="Meine Urlaube"
+            android:text="@string/meine_urlaube"
             android:textColor="#e8e9e9"
             android:textSize="12sp"
             android:tint="#ffffff" />
-
-        <!--<ImageButton
-            android:id="@+id/footerBtnAddHoliday"
-            android:layout_width="130dp"
-            android:layout_height="match_parent"
-
-
-            android:layout_alignParentStart="true"
-            android:backgroundTint="@color/colorPrimary"
-            android:contentDescription="@string/addholiday"
-            android:padding="6dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_flight_takeoff_black_24dp"
-            android:tint="#ffffff" />
-
-             <ImageButton
-            android:id="@+id/footerBtnSubscriptions"
-            android:layout_width="130dp"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:backgroundTint="@color/colorPrimary"
-            android:contentDescription="@string/viewsubscriptions"
-            android:padding="6dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_group_black_24dp"
-            android:tint="#ffffff" />
-
-        <ImageButton
-            android:id="@+id/footerBtnHolidays"
-            android:layout_width="130dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:backgroundTint="@color/colorPrimary"
-            android:contentDescription="@string/viewholidays"
-            android:padding="6dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_beach_access_black_24dp"
-            android:tint="#ffffff" />
-
-            -->
-
-
     </RelativeLayout>
 
 
